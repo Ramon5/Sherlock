@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="title" type="java.lang.String" value="Licen&#xe7;a BSD"/>
+    <Property name="modal" type="boolean" value="true"/>
+    <Property name="resizable" type="boolean" value="false"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane1" pref="586" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane1" pref="524" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTextPane" name="painelLicenca">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+            <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;  &lt;head&gt;&#xa;   &lt;style&gt;&#xa;    #corpo{&#xa;          text-align : justify;&#xa;      }&#xa;    #clausula{&#xa;       text-align : justify;&#xa;    }&#xa;   &lt;/style&gt;&#xa;  &lt;/head&gt;&#xa;  &lt;body&gt;&#xa;    &lt;p style=&quot;margin-top: 0&quot;&gt;&#xa;&lt;b&gt;Copyright (c) 2016, Ramon dos Santos Rodrigues&#xa;&lt;br&gt;Todos os direitos reservados.&lt;/b&gt;&#xa;&#xa;&lt;p&gt;&#xc9; permitida a redistribui&#xe7;&#xe3;o e o uso em formul&#xe1;rios originais e bin&#xe1;rios, com ou sem modifica&#xe7;&#xe3;o, desde que sejam cumpridas as&#xa;seguintes condi&#xe7;&#xf5;es:&lt;/p&gt;&#xa;&lt;div id=&quot;clausula&quot;&gt;&#xa;&lt;ol&gt;&#xa;&lt;br&gt;&lt;li&gt;Redistribui&#xe7;&#xf5;es do c&#xf3;digo-fonte devem manter o aviso de direitos autorais acima, esta lista de condi&#xe7;&#xf5;es e a seguinte isen&#xe7;&#xe3;o.&lt;/li&gt;&#xa;&#xa;&lt;br&gt;&lt;li&gt;As redistribui&#xe7;&#xf5;es em formato bin&#xe1;rio devem reproduzir o aviso de copyright acima, esta lista de condi&#xe7;&#xf5;es ea seguinte isen&#xe7;&#xe3;o de responsabilidade na documenta&#xe7;&#xe3;o e / ou outros materiais fornecidos com a distribui&#xe7;&#xe3;o.&lt;/li&gt;&#xa;&#xa;&lt;br&gt;&lt;li&gt;Nem o nome do detentor dos direitos autorais nem os nomes dos seus contribuidores podem ser utilizados para endossar ou promover produtos derivados deste software sem autoriza&#xe7;&#xe3;o pr&#xe9;via espec&#xed;fica por escrito.&lt;/li&gt;&#xa;&lt;/ol&gt;&#xa;&lt;/div&gt;&#xa;&lt;div id=&quot;corpo&quot;&gt;&#xa;&lt;p&gt;&#xa;ESTE SOFTWARE &#xc9; FORNECIDO PELOS DETENTORES DE COPYRIGHT E COLABORADORES &quot;NO ESTADO EM QUE SE ENCONTRAM&quot; E QUAISQUER GARANTIAS &#xa;EXPRESSAS OU IMPL&#xcd;CITAS, INCLUINDO, MAS N&#xc3;O SE LIMITANDO A, GARANTIAS IMPL&#xcd;CITAS DE COMERCIABILIDADE E ADEQUA&#xc7;&#xc3;O A UM PROP&#xd3;SITO  &#xa;ESPEC&#xcd;FICO. EM NENHUMA CIRCUNST&#xc2;NCIA O PROPRIET&#xc1;RIO OU OS CONTRIBUIDORES SER&#xc3;O RESPONS&#xc1;VEIS POR QUAISQUER DANOS DIRETOS, INDIRETOS, &#xa;INCIDENTAIS, ESPECIAIS, EXEMPLARES OU CONSEQ&#xdc;ENCIAIS (INCLUINDO, MAS N&#xc3;O SE LIMITANDO &#xc0;, AQUISI&#xc7;&#xc3;O DE BENS OU SERVI&#xc7;OS SUBSTITUTOS, &#xa;PERDA DE USO, DADOS OU LUCROS; OU INTERRUP&#xc7;&#xc3;O DE NEG&#xd3;CIOS), QUALQUER CAUSA E QUALQUER TEORIA DE RESPONSABILIDADE, SEJA POR CONTRATO, &#xa;RESPONSABILIDADE ESTRITA OU DANO (INCLUINDO NEGLIG&#xca;NCIA OU QUALQUER OUTRA) DECORRENTE DE QUALQUER FORMA FORA DO USO DESTE SOFTWARE, &#xa;MESMO SE AVISADO DA POSSIBILIDADE DE TAIS DANOS.&#xa;&lt;/p&gt;&#xa;&lt;/div&gt;&#xa;&#xa;&#xa;      &#xa;    &lt;/p&gt;&#xa;  &lt;/body&gt;&#xa;&lt;/html&gt;&#xa;"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>
