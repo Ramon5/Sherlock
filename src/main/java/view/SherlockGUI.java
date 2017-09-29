@@ -166,6 +166,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         });
 
         lbTwitter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Twitter-icon.png"))); // NOI18N
+        lbTwitter.setToolTipText("Ir para apps.twitter.com");
         lbTwitter.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbTwitterMouseClicked(evt);

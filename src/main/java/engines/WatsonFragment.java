@@ -287,7 +287,7 @@ public class WatsonFragment extends Thread implements DetectaSistema {
 
             while (scan.hasNext()) {
                 String linha = scan.next().trim();
-                if (!linha.isEmpty() && !linha.startsWith("|text|")) {
+                if (!linha.isEmpty() && !linha.startsWith("TEXT|")) {
 
                     TokenTweet token = new TokenTweet();
                     token.setNome(entrada.getName());
