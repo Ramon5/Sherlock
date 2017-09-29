@@ -440,7 +440,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         try {
             fileWriter = new FileWriterWithEncoding(manageDir.getArquivo(), StandardCharsets.UTF_8, true);
             bufferTweet = new BufferedWriter(fileWriter);
-            bufferTweet.append("TEXT|TO_USER_ID|FROM_USER|ID|LANG|FAVORITE_COUNT|CREATED_AT");
+            bufferTweet.append("|TEXT|TO_USER_ID|FROM_USER|ID|LANG|FAVORITE_COUNT|CREATED_AT");
             bufferTweet.newLine();
             bufferTweet.flush();
 

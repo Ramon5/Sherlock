@@ -42,10 +42,10 @@ import org.apache.log4j.PropertyConfigurator;
  */
 public class PadraoRegex {
 
-    private final String padraoDataCsv = "\\|\\w{3}\\s(.*?)\\d{4}\\|";
+    private final String padraoDataCsv = "\\|\\w{3}\\s(.*?)\\d{4}\\|{0,1}";
     private final String padraoDataTxt = "\\d{2}-\\d{2}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2}\\|$";
     private final String padraoTokenCsv = "\\w(.*?)$";
-    private final String padraoTweetCsv = "\\|(.*?)$";
+    private final String padraoTweet = "\\|(.*?)$";
     private final String padraoTokenTxt = "\\|\\w(.*?)\\d\\|$";
     private final String padraoAno = "\\d{4}$";
     private final String padraoDiaMes = "[A-z]{3}\\s\\d{2}";
@@ -72,7 +72,7 @@ public class PadraoRegex {
     }
 
     public String getPadraoTweetCsv() {
-        return padraoTweetCsv;
+        return padraoTweet;
     }
 
     public String getPadraoTokenTxt() {
@@ -138,7 +138,7 @@ public class PadraoRegex {
         if (m.find()) {
             data = m.group();
         }
-        String tweet = texto.replaceAll(padraoTweetCsv, "");
+        String tweet = texto.replaceAll(padraoTweet, "");
 
         strbuilder.append("|").append(tweet).append(" ").append(data).append("|");
 
@@ -146,7 +146,7 @@ public class PadraoRegex {
     }
 
     public String obterTweetCsv(String texto) {
-        Pattern p = Pattern.compile(padraoTweetCsv);
+        Pattern p = Pattern.compile(padraoTweet);
         Matcher m = p.matcher(texto);
         String exclusao = "";
         if (m.find()) {

@@ -218,7 +218,8 @@ public class WatsonFragment extends Thread implements DetectaSistema {
      * @param origem
      */
     public void separarTokens(File origem) {
-        detectarPadrao(origem);
+        //detectarPadrao(origem);
+         popularTokens(origem);
         /*if (origem.getName().endsWith(".txt")) {
             padraoTxt(origem);
         } else if (origem.getName().endsWith(".csv")) {
@@ -226,12 +227,14 @@ public class WatsonFragment extends Thread implements DetectaSistema {
         }*/
     }
 
-    private void detectarPadrao(File origem) {
+    /*private void detectarPadrao(File origem) {
         try {
             scan = new Scanner(origem).useDelimiter(System.getProperty("line.separator"));
             String linha = "";
             if (scan.hasNext()) {
-                linha = scan.next().trim();
+                if (!linha.isEmpty() && !linha.startsWith("|TEXT|")) {
+                    linha = scan.next().trim();
+                }
             }
             String token = "\\|\\d{10}$";
             Pattern pattern = Pattern.compile(token);
@@ -256,7 +259,8 @@ public class WatsonFragment extends Thread implements DetectaSistema {
 
             while (scan.hasNext()) {
                 String linha = scan.next().trim();
-                if (!linha.isEmpty()) {
+
+                if (!linha.isEmpty() && !linha.startsWith("|TEXT|")) {
 
                     TokenTweet token = new TokenTweet();
                     token.setNome(origem.getName());
@@ -278,16 +282,23 @@ public class WatsonFragment extends Thread implements DetectaSistema {
             logger.error(ex);
             JOptionPane.showMessageDialog(null, "Erro: Um ou mais arquivos não estão no padrão correto!");
         }
-    }
+    }*/
 
-    private void padraoCsv(File entrada) {
+    private void popularTokens(File entrada) {
         try {
 
             scan = new Scanner(new FileReader(entrada)).useDelimiter(System.getProperty("line.separator"));
-
+            String header = "\\|(?i)text\\|(.*?)";
+            Pattern p = Pattern.compile(header);
+            
             while (scan.hasNext()) {
                 String linha = scan.next().trim();
-                if (!linha.isEmpty() && !linha.startsWith("TEXT|")) {
+                Matcher m = p.matcher(linha);
+                String head = " ";
+                if(m.find()){
+                    head = m.group();
+                }
+                if (!linha.isEmpty() && !linha.startsWith(head)) {
 
                     TokenTweet token = new TokenTweet();
                     token.setNome(entrada.getName());
