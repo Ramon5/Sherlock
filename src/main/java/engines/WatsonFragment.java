@@ -138,7 +138,6 @@ public class WatsonFragment extends Thread implements DetectaSistema {
             for (String children : childrens) {
                 separarHierarquia(new File(source, children), new File(target, children));
             }
-
         } else {
             separarTokens(source);
             gerarArquivos(source, target);
@@ -288,7 +287,7 @@ public class WatsonFragment extends Thread implements DetectaSistema {
         try {
 
             scan = new Scanner(new FileReader(entrada)).useDelimiter(System.getProperty("line.separator"));
-            String header = "\\|(?i)text\\|(.*?)";
+            String header = "\\|{0,1}(?i)text\\|(.*?)";
             Pattern p = Pattern.compile(header);
             
             while (scan.hasNext()) {
