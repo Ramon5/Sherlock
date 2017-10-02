@@ -57,7 +57,7 @@ public class TweetDAO {
     public List<Tweet> getTweets(Coleta coleta){
         List<Tweet> lista = new ArrayList<>();
         try {
-            String sql = "select * from tweet as t inner join coleta as c on t.coleta_idcoleta = c.idcoleta where c.idcoleta = ?";
+            String sql = "select * from tweet as t inner join coleta as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ?";
             stmt = conection.prepareStatement(sql);
             stmt.setLong(1, coleta.getIdColeta());
             result = stmt.executeQuery();
