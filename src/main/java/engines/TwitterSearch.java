@@ -24,7 +24,10 @@
  */
 package engines;
 
+import entidade.Tweet;
 import com.dropbox.core.DbxException;
+import dao.TweetDAO;
+import entidade.Coleta;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -101,6 +104,9 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
     private ArrayList<Attribute> atributos;
     private Instances instancias;
     private List<Instance> aux;
+    
+    private Coleta coleta;
+    private TweetDAO tDAO;
 
     /**
      * Construtor
@@ -119,6 +125,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         limitado = false;
         criarListener();
         construirAtributos();
+        tDAO = new TweetDAO();
     }
 
     /**
@@ -141,6 +148,10 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
 
     }
 
+    public void setColeta(Coleta coleta){
+        this.coleta = coleta;
+    }
+    
     public void setRetweet(boolean ativo) {
         this.retweet = ativo;
 
@@ -222,7 +233,8 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
             if (cloud != null) {
                 salvarNaNuvem();
             }
-
+            
+            tDAO.closeConnection();
             this.interrupt();
 
         } else {
@@ -354,6 +366,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
                 .append(tweet.getUser().getScreenName()).append("|")
                 .append(String.valueOf(tweet.getId())).append("|")
                 .append(String.valueOf(tweet.getUser().getId())).append("|")
+                .append(String.valueOf(tweet.getLang())).append("|")
                 .append(String.valueOf(tweet.getFavoriteCount())).append("|")
                 .append(String.valueOf(tweet.getCreatedAt()));
 
@@ -387,7 +400,14 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         tw.setLocal(status.getUser().getLocation());
         tw.setIdTweet(status.getId());
         tw.setIdUsuario(status.getUser().getId());
-
+        tw.setTweet(status.getText());
+        tw.setTo_user_id(status.getInReplyToUserId());
+        tw.setFavorite_count((long)status.getFavoriteCount());
+        tw.setLang(status.getLang());
+        tw.setColeta(coleta);
+        
+        tDAO.salvar(tw);
+        
         return tw;
     }
 
@@ -440,7 +460,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         try {
             fileWriter = new FileWriterWithEncoding(manageDir.getArquivo(), StandardCharsets.UTF_8, true);
             bufferTweet = new BufferedWriter(fileWriter);
-            bufferTweet.append("|TEXT|TO_USER_ID|FROM_USER|ID|LANG|FAVORITE_COUNT|CREATED_AT");
+            bufferTweet.append("TEXT|TO_USER_ID|SCREEN_NAME|ID|USER_ID|LANG|FAVORITE_COUNT|CREATED_AT");
             bufferTweet.newLine();
             bufferTweet.flush();
 

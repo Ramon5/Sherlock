@@ -46,7 +46,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import org.apache.log4j.Logger;
-import engines.TokenTweet;
+import entidade.TokenTweet;
 import org.apache.log4j.PropertyConfigurator;
 import util.PreprocessoStrings;
 

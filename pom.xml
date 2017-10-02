@@ -136,6 +136,12 @@
             <version>3.8.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.firebirdsql.jdbc</groupId>
+            <artifactId>jaybird-jdk18</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
 
         <dependency>
             <groupId>com.google.maps</groupId>

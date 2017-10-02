@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import engines.TweetTR;
+import entidade.TweetTR;
 
 public class TableModelTR extends AbstractTableModel {
 

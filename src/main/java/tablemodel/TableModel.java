@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import engines.Tweet;
+import entidade.Tweet;
 
 public class TableModel extends AbstractTableModel {
 

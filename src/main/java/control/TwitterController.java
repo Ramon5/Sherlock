@@ -30,6 +30,7 @@
  */
 package control;
 
+import dao.ColetaDAO;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
@@ -38,6 +39,7 @@ import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import engines.TwitterSearch;
+import entidade.Coleta;
 import util.DetectaSistema;
 import static util.DetectaSistema.detectarSistema;
 import util.ManipuladorTabela;
@@ -55,8 +57,16 @@ public class TwitterController implements ManipuladorTabela, DetectaSistema {
         twitter.setLabels(SherlockGUI.lbStatus, SherlockGUI.lbQuantidade, SherlockGUI.lbData);
         twitter.setCloud(DropBoxController.getDropBox());
         twitter.setScroll(SherlockGUI.scroll, SherlockGUI.table);
-
         twitter.setRetweet(retweet);
+        
+        Coleta coleta = new Coleta();
+        coleta.setTermo(termo);
+        coleta.setData(Calendar.getInstance().getTime());
+        ColetaDAO cDAO = new ColetaDAO();
+        cDAO.salvar(coleta);
+        cDAO.closeConnection();
+        
+        twitter.setColeta(coleta);
 
         if (retroativo) {
             twitter.setLimite(getDataLimite(dia));

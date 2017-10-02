@@ -24,18 +24,14 @@
  */
 package engines;
 
+import entidade.TweetTR;
+import entidade.Tweet;
 import com.dropbox.core.DbxException;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,8 +58,6 @@ import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import util.AutenticacaoAPI;
 import util.DetectaSistema;
-import static util.Listageo.listGeoloc;
-import util.GerenciadorDiretorios;
 import util.GerenciadorLimite;
 import util.ManipuladorTabela;
 import util.PreprocessoStrings;
@@ -284,10 +278,9 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         valorDeInstancia[3] = tweet.getId();
         valorDeInstancia[4] = tweet.getUser().getId();
         valorDeInstancia[5] = atributos.get(5).addStringValue(tweet.getLang());
-        valorDeInstancia[6] = atributos.get(6).addStringValue(tweet.getLang());
-        valorDeInstancia[7] = tweet.getFavoriteCount();
+        valorDeInstancia[6] = tweet.getFavoriteCount();
         //valorDeInstancia[8] = atributos.get(8).parseDate(String.valueOf(dataHora.format(tweet.getCreatedAt())));
-        valorDeInstancia[8] = atributos.get(8).addStringValue(String.valueOf(dataHora.format(tweet.getCreatedAt())));
+        valorDeInstancia[7] = atributos.get(7).addStringValue(String.valueOf(dataHora.format(tweet.getCreatedAt())));
         Instance instancia = new DenseInstance(1.0, valorDeInstancia);
         aux.add(instancia);
     }
@@ -321,8 +314,14 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         String texto = tweet.getText().replaceAll(Pattern.quote("\""), "'");
         texto = texto.replace("\n", "").replace("\r", "");        
         texto = texto.replaceAll("\\|", " ");
-        bufferTweet.append("\"").append(texto).append("\"").append("|").append(String.valueOf(tweet.getId())).append("|").
-                append(tweet.getUser().getScreenName()).append("|").append(String.valueOf(dataHora.format(tweet.getCreatedAt())));
+        bufferTweet.append(texto).append("|")
+                .append(String.valueOf(tweet.getInReplyToUserId())).append("|")
+                .append(tweet.getUser().getScreenName()).append("|")
+                .append(String.valueOf(tweet.getId())).append("|")
+                .append(String.valueOf(tweet.getUser().getId())).append("|")
+                .append(String.valueOf(tweet.getLang())).append("|")
+                .append(String.valueOf(tweet.getFavoriteCount())).append("|")
+                .append(String.valueOf(tweet.getCreatedAt()));
         bufferTweet.newLine();
         bufferTweet.flush();
     }
@@ -335,7 +334,7 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         try {
             fileWriter = new FileWriterWithEncoding(containerTweet, StandardCharsets.UTF_8, true);
             bufferTweet = new BufferedWriter(fileWriter);
-            bufferTweet.append("TEXT,ID,USER,CREATED_AT");
+            bufferTweet.append("TEXT|TO_USER_ID|SCREEN_NAME|ID|USER_ID|LANG|FAVORITE_COUNT|CREATED_AT");
             bufferTweet.newLine();
             bufferTweet.flush();
 

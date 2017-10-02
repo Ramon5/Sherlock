@@ -36,7 +36,7 @@ import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.util.Calendar;
 import javax.swing.JOptionPane;
-import engines.TweetTR;
+import entidade.TweetTR;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
