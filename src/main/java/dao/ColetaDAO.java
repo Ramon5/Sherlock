@@ -30,19 +30,21 @@ public class ColetaDAO {
         this.con = factory.getConnection();
     }
     
-    public boolean salvar(Coleta coleta){
+    public Coleta salvar(Coleta coleta){
         try {
             String sql = "insert into Coleta(termo,datacoleta) values(?,?)";
             stmt = con.prepareStatement(sql);
             stmt.setString(1, coleta.getTermo());
-            stmt.setDate(2, (Date) coleta.getData());
+            stmt.setDate(2, new Date(coleta.getData().getTime()));
+            stmt.execute();
+            Coleta col = recuperar();
             
-            return stmt.execute();
+            return col;
             
         } catch (SQLException ex) {
             Logger.getLogger(ColetaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
+        return null;
     }
     
     public boolean excluir(Coleta coleta){
@@ -59,7 +61,28 @@ public class ColetaDAO {
         return false;
     }
     
-    public List<Coleta> getColeta(){
+    private Coleta recuperar(){
+        Coleta coleta = null;
+        try {
+            String sql = "select * from Coleta";
+            stmt = con.prepareStatement(sql);
+            result = stmt.executeQuery();
+            coleta = new Coleta();
+            
+            while(result.next()){
+                if(result.isLast()){
+                    coleta.setIdColeta(result.getLong("idcoleta"));
+                    coleta.setTermo(result.getString("termo"));
+                    coleta.setData(result.getDate("datacoleta"));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ColetaDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return coleta;
+    }
+    
+    public List<Coleta> listar(){
         List<Coleta> lista = new ArrayList<>();
         try {            
             String sql = "select * from Coleta";

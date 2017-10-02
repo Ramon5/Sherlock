@@ -234,7 +234,6 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
                 salvarNaNuvem();
             }
             
-            tDAO.closeConnection();
             this.interrupt();
 
         } else {
@@ -286,8 +285,8 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
                     max_id = Math.min(tweet.getId(), max_id);
                     dataRef = tweet.getCreatedAt();
                     
+                    
                 }
-                
                 count+=listTweets.size();
                 listTweets.clear();
                 
@@ -318,10 +317,10 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
 
         } catch (IOException e) {
             logger.error(e);
-            JOptionPane.showMessageDialog(null, "Não foi possível gravar o arquivo de coleta, veja o log!");
+            JOptionPane.showMessageDialog(null, e.getLocalizedMessage());
         } catch (NullPointerException ex) {
             logger.error(ex);
-            JOptionPane.showMessageDialog(null, "Recurso esgotado para este termo!");
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
             habilitarComandos(sdf2.format(dataRef));
         }
     }
@@ -421,7 +420,8 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         botao.setEnabled(true);
         botaoLimpar.setEnabled(true);
         ultimaData.setText(data);
-        salvarArff();
+        tDAO.closeConnection();
+        //salvarArff();
         mensagem();
 
     }

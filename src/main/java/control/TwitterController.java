@@ -63,7 +63,7 @@ public class TwitterController implements ManipuladorTabela, DetectaSistema {
         coleta.setTermo(termo);
         coleta.setData(Calendar.getInstance().getTime());
         ColetaDAO cDAO = new ColetaDAO();
-        cDAO.salvar(coleta);
+        coleta = cDAO.salvar(coleta);        
         cDAO.closeConnection();
         
         twitter.setColeta(coleta);

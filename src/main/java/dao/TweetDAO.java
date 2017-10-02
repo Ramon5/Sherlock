@@ -42,7 +42,7 @@ public class TweetDAO {
             stmt.setString(5, tweet.getAutor());
             stmt.setLong(6, tweet.getIdUsuario());
             stmt.setLong(7, tweet.getFavorite_count());
-            stmt.setDate(8, (Date) tweet.getDatecreated());
+            stmt.setDate(8, new Date(tweet.getDatecreated().getTime()));
             stmt.setString(9, tweet.getLang());
             
             return stmt.execute();
@@ -53,10 +53,11 @@ public class TweetDAO {
         return false;
     }
     
+    
     public List<Tweet> getTweets(Coleta coleta){
         List<Tweet> lista = new ArrayList<>();
         try {
-            String sql = "select * from tweet as t inner join coleta as c on t.coleta_idcoleta = ?";
+            String sql = "select * from tweet as t inner join coleta as c on t.coleta_idcoleta = c.idcoleta where c.idcoleta = ?";
             stmt = conection.prepareStatement(sql);
             stmt.setLong(1, coleta.getIdColeta());
             result = stmt.executeQuery();
