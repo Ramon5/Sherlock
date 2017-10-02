@@ -27,10 +27,10 @@ public class ColetaDAO {
 
     public ColetaDAO() {
         this.factory = new ConectionFactory();
-        this.con = factory.getConnection();
     }
     
-    public Coleta salvar(Coleta coleta){
+    public Coleta salvar(Coleta coleta){        
+        this.con = factory.getConnection();
         try {
             String sql = "insert into Coleta(termo,datacoleta) values(?,?)";
             stmt = con.prepareStatement(sql);
@@ -47,7 +47,8 @@ public class ColetaDAO {
         return null;
     }
     
-    public boolean excluir(Coleta coleta){
+    public boolean excluir(Coleta coleta){        
+        this.con = factory.getConnection();
         try {
             String sql = "delete from Coleta where idColeta = ?";
             stmt = con.prepareStatement(sql);
@@ -82,7 +83,8 @@ public class ColetaDAO {
         return coleta;
     }
     
-    public List<Coleta> listar(){
+    public List<Coleta> listar(){        
+        this.con = factory.getConnection();
         List<Coleta> lista = new ArrayList<>();
         try {            
             String sql = "select * from Coleta";

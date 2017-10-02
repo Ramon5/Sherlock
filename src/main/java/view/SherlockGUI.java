@@ -31,6 +31,8 @@ import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import engines.DropBox;
+import entidade.Coleta;
+import java.util.Calendar;
 import util.AutenticacaoAPI;
 import util.DetectaSistema;
 import util.ManipuladorTabela;
@@ -658,7 +660,10 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
     }//GEN-LAST:event_chckbxColetaRetroativaItemStateChanged
 
     private void btnColetaRealActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnColetaRealActionPerformed
-        controlStream.coletarStreams();
+        Coleta coleta = new Coleta();
+        coleta.setTermo(campoBusca.getText());
+        coleta.setData(Calendar.getInstance().getTime());
+        controlStream.coletarStreams(coleta);
     }//GEN-LAST:event_btnColetaRealActionPerformed
 
     private void btnCriaArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCriaArquivoActionPerformed

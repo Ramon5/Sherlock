@@ -30,11 +30,13 @@
  */
 package control;
 
+import dao.ColetaDAO;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import engines.Mensagem;
 import engines.TwitterStreamCollect;
+import entidade.Coleta;
 import util.GerenciadorDiretorios;
 import static util.ManipuladorTabela.manipuladorTR;
 import view.SherlockGUI;
@@ -72,8 +74,12 @@ public class TwitterStreamController {
         verificarArquivo(stream);
     }
 
-    public void coletarStreams() {
+    public void coletarStreams(Coleta col) {
         if (coleta != null && !coleta.getContainerTweet().isAtivo()) {
+            ColetaDAO cDAO = new ColetaDAO();
+            col = cDAO.salvar(col);
+            cDAO.closeConnection();
+            coleta.setColeta(col);
             coleta.collectRealTime();
             verificarArquivo(coleta);
         }

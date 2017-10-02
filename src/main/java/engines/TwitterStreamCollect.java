@@ -27,6 +27,8 @@ package engines;
 import entidade.TweetTR;
 import entidade.Tweet;
 import com.dropbox.core.DbxException;
+import dao.TweetDAO;
+import entidade.Coleta;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -96,6 +98,9 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
     private ArrayList<Attribute> atributos;
     private Instances instancias;
     private List<Instance> aux;
+    
+    private Coleta coleta;    
+    private TweetDAO tDAO;
 
     public TwitterStreamCollect(String query) {
         this.query = query;
@@ -108,6 +113,7 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         limite = new GerenciadorLimite(labelSt);
         filename = query;
         construirAtributos();
+        tDAO = new TweetDAO();
     }
 
     /**
@@ -157,6 +163,9 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         this.labelSt = labelSt;
     }
 
+    public void setColeta(Coleta coleta){
+        this.coleta = coleta;
+    }
     /**
      * Método responsável por realizar a coleta em tempo real
      */
@@ -300,6 +309,13 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         tw.setLocal(status.getUser().getLocation());
         tw.setIdTweet(status.getId());
         tw.setIdUsuario(status.getUser().getId());
+        tw.setTweet(status.getText());
+        tw.setTo_user_id(status.getInReplyToUserId());
+        tw.setFavorite_count((long)status.getFavoriteCount());
+        tw.setLang(status.getLang());
+        tw.setColeta(coleta);
+        
+        tDAO.salvar(tw);
 
         return tw;
     }
@@ -361,6 +377,7 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
                 containerTweet.setDataFim(dataFormato.format(dataFinal));
                 novoNomeColeta = renomearColeta(dataFinal);
             }
+            tDAO.closeConnection();
 
         } catch (IllegalStateException ex) {
             logger.error(ex);
@@ -372,14 +389,14 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         }
 
         //inicializando a stream de instancias
-        instancias = new Instances(query, atributos, aux.size());
+        /*instancias = new Instances(query, atributos, aux.size());
 
         //preenchendo o stream com as instancias de tweets recuperados
         for (Instance i : aux) {
             instancias.add(i);
         }
 
-        salvarArff();
+        salvarArff();*/
 
     }
 

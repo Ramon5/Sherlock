@@ -27,11 +27,11 @@ public class TweetDAO {
     private ResultSet result;
 
     public TweetDAO() {
-        this.factory = new ConectionFactory();
-        this.conection = factory.getConnection();
+        this.factory = new ConectionFactory();        
     }
     
     public boolean salvar(Tweet tweet){
+        this.conection = factory.getConnection();
         try {
             String sql = "insert into TWEET(idtweet,coleta_idcoleta,tweet,to_user_id,screenname,user_id,favorite_count,created_at,lang) values(?,?,?,?,?,?,?,?,?)";
             stmt = conection.prepareStatement(sql);
@@ -44,7 +44,7 @@ public class TweetDAO {
             stmt.setLong(7, tweet.getFavorite_count());
             stmt.setDate(8, new Date(tweet.getDatecreated().getTime()));
             stmt.setString(9, tweet.getLang());
-            
+                        
             return stmt.execute();
             
         } catch (SQLException ex) {
@@ -55,6 +55,7 @@ public class TweetDAO {
     
     
     public List<Tweet> getTweets(Coleta coleta){
+        this.conection = factory.getConnection();
         List<Tweet> lista = new ArrayList<>();
         try {
             String sql = "select * from tweet as t inner join coleta as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ?";

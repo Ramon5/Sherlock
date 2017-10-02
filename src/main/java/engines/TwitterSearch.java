@@ -406,6 +406,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         tw.setColeta(coleta);
         
         tDAO.salvar(tw);
+        tDAO.closeConnection();
         
         return tw;
     }
@@ -420,7 +421,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         botao.setEnabled(true);
         botaoLimpar.setEnabled(true);
         ultimaData.setText(data);
-        tDAO.closeConnection();
+        //tDAO.closeConnection();
         //salvarArff();
         mensagem();
 
