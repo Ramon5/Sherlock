@@ -63,7 +63,6 @@ public class TwitterStreamController {
         GerenciadorDiretorios diretorio = new GerenciadorDiretorios(termo, true);
         diretorio.criaArquivoColeta();
         TwitterStreamCollect stream = new TwitterStreamCollect(termo);
-        stream.setCloud(DropBoxController.getDropBox());
         stream.setContainer(diretorio.getContainer());
         stream.setScroll(SherlockGUI.scrollPainel, SherlockGUI.tableView);
         stream.setStatus(SherlockGUI.lbStatusReal);

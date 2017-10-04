@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -58,12 +59,19 @@ public class GeradorCredencial extends CriptografiaDeChaves {
             bfwriter = new FileOutputStream(new File(caminho));
             bfwriter.write(encriptar(keys));
             bfwriter.flush();
-            bfwriter.close();
 
         } catch (FileNotFoundException e) {
             logger.error(e.getMessage());
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }finally{
+            if(bfwriter != null){
+                try {
+                    bfwriter.close();
+                } catch (IOException ex) {
+                    java.util.logging.Logger.getLogger(GeradorCredencial.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
     }
 

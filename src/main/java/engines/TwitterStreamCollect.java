@@ -71,9 +71,7 @@ import weka.core.converters.ArffSaver;
 
 public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
 
-    private FileWriterWithEncoding fileWriter;
-    private Calendar data;
-    private BufferedWriter bufferTweet;
+    
     private String query;
     private Logger logger;
     private JScrollPane scroll;
@@ -83,7 +81,6 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
     private String filename;
     private long contador = 0;
     private Date dataFinal;
-    private Object cloud;
     private int linha;
     private TableModel tabelaTweets;
     private JLabel labelSt;
@@ -91,59 +88,25 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
     private TweetTR containerTweet;
     private GerenciadorLimite limite;
 
-    private String novoNomeColeta;
-    private SimpleDateFormat dataHora;
     private FilterQuery filter;
-
-    private ArrayList<Attribute> atributos;
-    private Instances instancias;
-    private List<Instance> aux;
 
     private Coleta coleta;
     private TweetDAO tDAO;
 
     public TwitterStreamCollect(String query) {
         this.query = query;
-        data = Calendar.getInstance();
         InputStream in = this.getClass().getResourceAsStream("/log4j/log4j.properties");
         PropertyConfigurator.configure(in);
         this.logger = Logger.getLogger(TwitterStreamCollect.class);
-        dataHora = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         tabelaTweets = new TableModel();
         limite = new GerenciadorLimite(labelSt);
         filename = query;
-        construirAtributos();
         tDAO = new TweetDAO();
     }
 
-    /**
-     * Cria os atributos que serão usados no arquivo .arff inicia a lista que
-     * irá armazenar as instancias de tweets
-     */
-    private void construirAtributos() {
-        atributos = new ArrayList<>();
-        aux = new ArrayList<>();
-        atributos.add(new Attribute("TEXT", (ArrayList<String>) null));
-        atributos.add(new Attribute("TO_USER_ID"));
-        atributos.add(new Attribute("USER", (ArrayList<String>) null));
-        atributos.add(new Attribute("ID"));
-        atributos.add(new Attribute("FROM_USER_ID"));
-        atributos.add(new Attribute("LANG", (ArrayList<String>) null));
-        atributos.add(new Attribute("FAVORITE_COUNT"));
-        atributos.add(new Attribute("CREATED_AT", (ArrayList<String>) null));
-        atributos.add(new Attribute("RETWEET"));
-        atributos.add(new Attribute("LATITUDE"));
-        atributos.add(new Attribute("LONGITUDE"));
-        //formato data
-        //atributos.add(new Attribute("CREATED_AT", "dd-MM-yyyy HH:mm:ss"));
-    }
 
     public TableModel getTabelaTweets() {
         return tabelaTweets;
-    }
-
-    public void setCloud(Object cloud) {
-        this.cloud = cloud;
     }
 
     public TweetTR getContainerTweet() {
@@ -176,7 +139,6 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
     public void collectRealTime() {
 
         twitterSt = new TwitterStreamFactory().getInstance(AutenticacaoAPI.oauth);
-        //iniciarContainers();
         containerTweet.setAtivo(true);
         containerTweet.setDataInicio(getData());
         manipuladorTR.atualizar();
@@ -248,7 +210,6 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
             filter = new FilterQuery();
             filter.track(query);
             filter.language("pt");
-            //twitterSt.retweet();
             twitterSt.addListener(listener);
             twitterSt.filter(filter);
 
@@ -266,42 +227,8 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
     public void coletar(Status tweet) {
         tabelaTweets.addTweet(getTweet(tweet));
         scroll.getVerticalScrollBar().setValue(table.getHeight());
-        //gravarTweet(tweet);
-        //criarInstancias(tweet);
     }
 
-    /**
-     * Recupera os tweets e cria as instancias dos mesmos com os respectivos
-     * dados que serão populados no arquivo .arff (Weka Cluster)
-     *
-     * @param tweet
-     */
-    private void criarInstancias(Status tweet) {
-        double[] valorDeInstancia = new double[atributos.size()];
-        valorDeInstancia[0] = atributos.get(0).addStringValue(PreprocessoStrings.processar(tweet.getText(), true));
-        valorDeInstancia[1] = tweet.getInReplyToUserId();
-        valorDeInstancia[2] = atributos.get(2).addStringValue(tweet.getUser().getScreenName());
-        valorDeInstancia[3] = tweet.getId();
-        valorDeInstancia[4] = tweet.getUser().getId();
-        valorDeInstancia[5] = atributos.get(5).addStringValue(tweet.getLang());
-        valorDeInstancia[6] = tweet.getFavoriteCount();
-        //valorDeInstancia[8] = atributos.get(8).parseDate(String.valueOf(dataHora.format(tweet.getCreatedAt())));
-        valorDeInstancia[7] = atributos.get(7).addStringValue(String.valueOf(dataHora.format(tweet.getCreatedAt())));
-        if (tweet.isRetweet()) {
-            valorDeInstancia[8] = 1;
-        } else {
-            valorDeInstancia[8] = 0;
-        }
-        if (tweet.getGeoLocation() != null) {
-            valorDeInstancia[9] = tweet.getGeoLocation().getLatitude();
-            valorDeInstancia[10] = tweet.getGeoLocation().getLongitude();
-        } else {
-            valorDeInstancia[9] = 0.0;
-            valorDeInstancia[10] = 0.0;
-        }
-        Instance instancia = new DenseInstance(1.0, valorDeInstancia);
-        aux.add(instancia);
-    }
 
     /**
      * Método responsável por obter as informações dos tweets recuperados em
@@ -318,7 +245,10 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         tw.setLocal(status.getUser().getLocation());
         tw.setIdTweet(status.getId());
         tw.setIdUsuario(status.getUser().getId());
-        tw.setTweet(status.getText());
+        String texto = status.getText().replaceAll(Pattern.quote("\""), "'");
+        texto = texto.replace("\n", "").replace("\r", "");
+        texto = texto.replaceAll("\\|", " ");
+        tw.setTweet(texto);
         tw.setTo_user_id(status.getInReplyToUserId());
         tw.setFavorite_count(status.getFavoriteCount());
         tw.setLang(status.getLang());
@@ -343,47 +273,6 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
     }
 
     /**
-     * Método responsável por gravar os tweets recuperados, no arquivo de saída
-     *
-     * @param tweet
-     * @throws IOException
-     */
-    private void gravarTweet(Status tweet) throws IOException {
-        String texto = tweet.getText().replaceAll(Pattern.quote("\""), "'");
-        texto = texto.replace("\n", "").replace("\r", "");
-        texto = texto.replaceAll("\\|", " ");
-        bufferTweet.append(texto).append("|")
-                .append(String.valueOf(tweet.getInReplyToUserId())).append("|")
-                .append(tweet.getUser().getScreenName()).append("|")
-                .append(String.valueOf(tweet.getId())).append("|")
-                .append(String.valueOf(tweet.getUser().getId())).append("|")
-                .append(String.valueOf(tweet.getLang())).append("|")
-                .append(String.valueOf(tweet.getFavoriteCount())).append("|")
-                .append(String.valueOf(tweet.getCreatedAt()));
-        bufferTweet.newLine();
-        bufferTweet.flush();
-    }
-
-    /**
-     * Método responsável por criar o arquivo que armazenará os tweets coletados
-     */
-    private void iniciarContainers() {
-
-        try {
-            fileWriter = new FileWriterWithEncoding(containerTweet, StandardCharsets.UTF_8, true);
-            bufferTweet = new BufferedWriter(fileWriter);
-            bufferTweet.append("TEXT|TO_USER_ID|SCREEN_NAME|ID|USER_ID|LANG|RETWEET|LATITUDE|LONGITUDE|FAVORITE_COUNT|CREATED_AT");
-            bufferTweet.newLine();
-            bufferTweet.flush();
-
-        } catch (IOException ex) {
-            logger.error(ex);
-            JOptionPane.showMessageDialog(null, "Erro: " + ex.getLocalizedMessage());
-        }
-
-    }
-
-    /**
      * Finalizando a coleta em tempo real
      *
      */
@@ -393,11 +282,9 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
 
             twitterSt.cleanUp();
             containerTweet.setAtivo(false);
-            //encerrarStreams();
 
             if (dataFinal != null) {
                 containerTweet.setDataFim(dataFormato.format(dataFinal));
-                //novoNomeColeta = renomearColeta(dataFinal);
             }
 
         } catch (IllegalStateException ex) {
@@ -407,127 +294,9 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
             tDAO.closeConnection();
         }
 
-        /*if (cloud != null) {
-            salvarNaNuvem();
-        }*/
-
-        //inicializando a stream de instancias
-        /*instancias = new Instances(query, atributos, aux.size());
-
-        //preenchendo o stream com as instancias de tweets recuperados
-        for (Instance i : aux) {
-            instancias.add(i);
-        }
-
-        salvarArff();*/
     }
 
-    /**
-     * Encerrar as streams de gravação
-     */
-    public void encerrarStreams() {
-        try {
-            if(fileWriter != null){
-                fileWriter.close();
-            }
-            if(bufferTweet != null){
-                bufferTweet.close();
-            }
-
-        } catch (IOException ex) {
-            logger.error(ex);
-        }
-    }
-
-    /**
-     * Renomeando o arquivo de coleta após o término
-     *
-     * @param dataRef
-     */
-    private String renomearColeta(Date dataRef) {
-        try {
-            SimpleDateFormat formatoColeta = new SimpleDateFormat("dd-MM-yyyy");
-            File coleta = new File(containerTweet.getAbsolutePath());
-            StringBuilder str = new StringBuilder();
-
-            str.append(containerTweet.getParent()).append("/")
-                    .append(containerTweet.getArquivo()).append(" ").append("(")
-                    .append(formatoColeta.format(dataRef)).append(" a ").append(formatoColeta.format(data.getTime())).append(")");
-
-            String novoNome = str.toString();
-            File coletaRenomeada = new File(novoNome + ".csv");
-
-            coleta.renameTo(coletaRenomeada);
-            return coletaRenomeada.getName();
-
-        } catch (Exception e) {
-            logger.error(e);
-            JOptionPane.showMessageDialog(null, "Erro: " + e.getLocalizedMessage());
-        }
-        return null;
-    }
-
-    /**
-     * Salva a coleta corrente no Dropbox
-     */
-    private void salvarNaNuvem() {
-        Calendar mes = Calendar.getInstance();
-        if (cloud instanceof DropBox) {
-            DropBox drop = (DropBox) cloud;
-            try {
-                drop.upload(System.getProperty("user.home") + "/SherlockTM/Dataset/" + getDirRaiz(mes) + "/" + filename, novoNomeColeta + ".txt");
-
-            } catch (DbxException | IOException e) {
-                logger.error(e);
-                JOptionPane.showMessageDialog(null, "Erro: " + e.getLocalizedMessage());
-            }
-        }
-    }
-
-    /**
-     * Grava o arquivo .arff no disco rígido
-     */
-    private void salvarArff() {
-        try {
-            ArffSaver saver = new ArffSaver();
-            saver.setInstances(instancias);
-            saver.setFile(new File(containerTweet.getParent() + "/" + query + ".arff"));
-            saver.writeBatch();
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(TwitterSearch.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private String getDirRaiz(Calendar mes) {
-        switch (mes.get(Calendar.MONTH)) {
-            case 0:
-                return "Janeiro-" + mes.get(Calendar.YEAR);
-            case 1:
-                return "Fevereiro-" + mes.get(Calendar.YEAR);
-            case 2:
-                return "Marco-" + mes.get(Calendar.YEAR);
-            case 3:
-                return "Abril-" + mes.get(Calendar.YEAR);
-            case 4:
-                return "Maio-" + mes.get(Calendar.YEAR);
-            case 5:
-                return "Junho-" + mes.get(Calendar.YEAR);
-            case 6:
-                return "Julho-" + mes.get(Calendar.YEAR);
-            case 7:
-                return "Agosto-" + mes.get(Calendar.YEAR);
-            case 8:
-                return "Setembro-" + mes.get(Calendar.YEAR);
-            case 9:
-                return "Outubro-" + mes.get(Calendar.YEAR);
-            case 10:
-                return "Novembro-" + mes.get(Calendar.YEAR);
-            case 11:
-                return "Dezembro-" + mes.get(Calendar.YEAR);
-        }
-        return null;
-    }
-
+   
     private String getData() {
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
         Calendar hoje = Calendar.getInstance();
