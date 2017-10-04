@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 root.
+ * Copyright 2016 root.
  * All rights reserved.
  *
  * É permitida a redistribuição e o uso em formulários originais e binários, com ou
@@ -28,18 +28,29 @@
  * DECORRENTE DE QUALQUER FORMA FORA DO USO DESTE SOFTWARE, MESMO SE AVISADO DA 
  * POSSIBILIDADE DE TAIS DANOS.
  */
-package util;
+package inativos;
 
-import tablemodel.TableModelStream;
-import tablemodel.TableModelSearch;
+import inativos.Georeferencia;
+import java.util.Comparator;
 
 /**
  *
  * @author root
  */
-public interface ManipuladorTabela {
-    
-    static TableModelSearch manipulador = new TableModelSearch();
-    static TableModelStream manipuladorTR = new TableModelStream();
-    
+public class OrdenacaoIncidencias implements Comparator<Georeferencia> {
+
+    @Override
+    public int compare(Georeferencia t, Georeferencia t1) {
+
+        if (t.getOcorrencia() > t1.getOcorrencia()) {
+            return 1;
+        }
+        if (t.getOcorrencia() < t1.getOcorrencia()) {
+            return -1;
+        }
+
+        return 0;
+
+    }
+
 }

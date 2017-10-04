@@ -18,13 +18,11 @@ import java.util.logging.Logger;
 public class ColetaDAO {
 
     private Connection con;
-    private ConnectionFactory factory;
     private PreparedStatement stmt;
     private ResultSet result;
 
     public ColetaDAO() {
-        this.factory = new ConnectionFactory();
-        this.con = factory.getConnection();
+        this.con = new ConnectionFactory().getConnection();
     }
 
     public Coleta salvar(Coleta coleta) {

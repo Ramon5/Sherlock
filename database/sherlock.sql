@@ -1,8 +1,15 @@
 CREATE TABLE Coleta (
   idColeta BIGINT  NOT NULL  ,
-  termo VARCHAR(200)  NOT NULL  ,
+  termo VARCHAR(100)  NOT NULL  ,
   dataColeta TIMESTAMP  NOT NULL    ,
 PRIMARY KEY(idColeta));
+
+
+
+CREATE TABLE Autorizacao (
+  idAuth BIGINT  NOT NULL  ,
+  chave VARCHAR(20)  NOT NULL    ,
+PRIMARY KEY(idAuth));
 
 
 
@@ -15,10 +22,9 @@ CREATE TABLE Tweet (
   user_id BIGINT    ,
   favorite_count INTEGER    ,
   created_at TIMESTAMP  NOT NULL  ,
-  lang char(2)	,
-  retweet integer    ,
-  latitude DOUBLE precision       ,
-  longitude DOUBLE precision , 
+  retweet INTEGER    ,
+  latitude DOUBLE    ,
+  longitude DOUBLE      ,
 PRIMARY KEY(idTweet, Coleta_idColeta)  ,
   FOREIGN KEY(Coleta_idColeta)
     REFERENCES Coleta(idColeta)
@@ -27,6 +33,23 @@ PRIMARY KEY(idTweet, Coleta_idColeta)  ,
 
 
 CREATE INDEX Tweet_FKIndex1 ON Tweet (Coleta_idColeta);
+
+
+
+CREATE TABLE Chave (
+  idChave BIGINT  NOT NULL  ,
+  Autorizacao_idAuth BIGINT  NOT NULL  ,
+  consumer_key VARCHAR(255)  NOT NULL  ,
+  consumer_secret VARCHAR(255)  NOT NULL    ,
+PRIMARY KEY(idChave, Autorizacao_idAuth)  ,
+  FOREIGN KEY(Autorizacao_idAuth)
+    REFERENCES Autorizacao(idAuth)
+      ON DELETE CASCADE
+      ON UPDATE NO ACTION);
+
+
+CREATE INDEX Chave_FKIndex1 ON Chave (Autorizacao_idAuth);
+
 
 
 

@@ -24,6 +24,7 @@
  */
 package engines;
 
+import util.Mensagem;
 import dao.TweetDAO;
 import entidade.Coleta;
 import entidade.Tweet;
@@ -45,7 +46,6 @@ import twitter4j.RateLimitStatusListener;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import util.AutenticacaoAPI;
-import util.GerenciadorLimite;
 import util.ManipuladorTabela;
 
 public final class TwitterSearch extends Thread implements ManipuladorTabela {

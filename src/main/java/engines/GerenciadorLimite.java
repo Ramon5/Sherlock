@@ -28,18 +28,59 @@
  * DECORRENTE DE QUALQUER FORMA FORA DO USO DESTE SOFTWARE, MESMO SE AVISADO DA 
  * POSSIBILIDADE DE TAIS DANOS.
  */
-package util;
+package engines;
 
-import tablemodel.TableModelStream;
-import tablemodel.TableModelSearch;
+import javax.swing.JLabel;
+import org.apache.log4j.Logger;
+import twitter4j.QueryResult;
+import twitter4j.RateLimitStatusEvent;
 
 /**
  *
  * @author root
  */
-public interface ManipuladorTabela {
-    
-    static TableModelSearch manipulador = new TableModelSearch();
-    static TableModelStream manipuladorTR = new TableModelStream();
-    
+public class GerenciadorLimite {
+
+    private final JLabel status;
+    private final Logger logger;
+
+    public GerenciadorLimite(JLabel status) {
+        this.status = status;
+        logger = Logger.getLogger(GerenciadorLimite.class);
+    }
+
+    public void checarLimite(RateLimitStatusEvent limit) {
+        if (limit.isAccountRateLimitStatus() || limit.isIPRateLimitStatus()) {
+            if (limit.getRateLimitStatus().getRemaining() <= 0) {
+                int tempoEspera = limit.getRateLimitStatus().getSecondsUntilReset() + 200;
+
+                for (int i = tempoEspera; i > 0; i--) {
+                    try {
+                        status.setText("\nLimite atingido!! Esperando: " + i + " segundos");
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                        logger.error(ex);
+                    }
+                }
+            }
+        }
+    }
+
+    public void checarLimiteBusca(QueryResult limit) {
+        if (limit != null) {
+            if (limit.getRateLimitStatus().getRemaining() <= 0) {
+                int tempoEspera = limit.getRateLimitStatus().getSecondsUntilReset() + 200;
+                for (int i = tempoEspera; i > 0; i--) {
+                    try {
+                        status.setText("\nLimite atingido!! Esperando: " + i + " segundos");
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                        logger.error(ex);
+                    }
+                }
+            }
+        }
+    }
 }

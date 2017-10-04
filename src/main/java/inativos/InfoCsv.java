@@ -28,18 +28,38 @@
  * DECORRENTE DE QUALQUER FORMA FORA DO USO DESTE SOFTWARE, MESMO SE AVISADO DA 
  * POSSIBILIDADE DE TAIS DANOS.
  */
-package util;
+package inativos;
 
-import tablemodel.TableModelStream;
-import tablemodel.TableModelSearch;
+import twitter4j.Status;
 
 /**
  *
  * @author root
  */
-public interface ManipuladorTabela {
+public class InfoCsv {
     
-    static TableModelSearch manipulador = new TableModelSearch();
-    static TableModelStream manipuladorTR = new TableModelStream();
+    public static String getProfileImage(Status tweet){
+        if(tweet.getUser().getProfileImageURL() != null){
+            return tweet.getUser().getProfileImageURLHttps();
+        }else{
+            return "";
+        }
+    }
+    
+    public static String getLatitude(Status tweet){
+        if(tweet.getGeoLocation() != null){
+            return String.valueOf(tweet.getGeoLocation().getLatitude());
+        }else{
+            return "";
+        }
+    }
+    
+    public static String getLongitude(Status tweet){
+        if(tweet.getGeoLocation() != null){
+            return String.valueOf(tweet.getGeoLocation().getLongitude());
+        }else{
+            return "";
+        }
+    }
     
 }

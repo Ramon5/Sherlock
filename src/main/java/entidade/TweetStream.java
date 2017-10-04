@@ -28,18 +28,68 @@
  * DECORRENTE DE QUALQUER FORMA FORA DO USO DESTE SOFTWARE, MESMO SE AVISADO DA 
  * POSSIBILIDADE DE TAIS DANOS.
  */
-package util;
+package entidade;
 
-import tablemodel.TableModelStream;
-import tablemodel.TableModelSearch;
+import java.io.File;
+import java.util.Date;
 
 /**
  *
  * @author root
  */
-public interface ManipuladorTabela {
+public class TweetStream extends File{
     
-    static TableModelSearch manipulador = new TableModelSearch();
-    static TableModelStream manipuladorTR = new TableModelStream();
+    private String arquivo;
+    private Long quantidade;
+    private String dataInicio;
+    private String dataFim;
+    private boolean ativo = false;
+
+    public TweetStream(String string) {
+        super(string);
+    }
+
+    public String getArquivo() {
+        return arquivo;
+    }
+
+    public void setArquivo(String arquivo) {
+        this.arquivo = arquivo;
+    }
+
+    public Long getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(Long quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public String getDataInicio() {
+        return dataInicio;
+    }
+
+    public void setDataInicio(String dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public String getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(String dataFim) {
+        this.dataFim = dataFim;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+       
+    
     
 }

@@ -30,7 +30,7 @@
  */
 package view;
 
-import control.MapsController;
+import inativos.MapsController;
 import java.awt.Color;
 
 /**

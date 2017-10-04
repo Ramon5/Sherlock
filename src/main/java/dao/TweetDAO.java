@@ -19,13 +19,11 @@ import java.util.logging.Logger;
 public class TweetDAO {
 
     private Connection conection;
-    private ConnectionFactory factory;
     private PreparedStatement stmt;
     private ResultSet result;
 
     public TweetDAO() {
-        this.factory = new ConnectionFactory();
-        this.conection = factory.getConnection();
+        this.conection = new ConnectionFactory().getConnection();
     }
 
     public boolean salvar(Tweet tweet) {

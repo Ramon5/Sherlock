@@ -28,18 +28,56 @@
  * DECORRENTE DE QUALQUER FORMA FORA DO USO DESTE SOFTWARE, MESMO SE AVISADO DA 
  * POSSIBILIDADE DE TAIS DANOS.
  */
-package util;
+package inativos;
 
-import tablemodel.TableModelStream;
-import tablemodel.TableModelSearch;
+import java.util.Date;
 
 /**
  *
  * @author root
  */
-public interface ManipuladorTabela {
+public class Incidencias {
     
-    static TableModelSearch manipulador = new TableModelSearch();
-    static TableModelStream manipuladorTR = new TableModelStream();
+    private Long idIncidencia;
+    private String termo;
+    private Date data;
+    private String[] locais;
+
+    public Incidencias() {
+        locais = new String[5];
+    }
+
+    public Long getIdIncidencia() {
+        return idIncidencia;
+    }
+
+    public void setIdIncidencia(Long idIncidencia) {
+        this.idIncidencia = idIncidencia;
+    }
+
+    public String getTermo() {
+        return termo;
+    }
+
+    public void setTermo(String termo) {
+        this.termo = termo;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
+
+    public String[] getLocais() {
+        return locais;
+    }
+
+    public void setLocais(String[] locais) {
+        this.locais = locais;
+    }
+    
     
 }

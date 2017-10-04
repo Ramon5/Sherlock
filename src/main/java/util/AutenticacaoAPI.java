@@ -30,7 +30,6 @@
  */
 package util;
 
-
 import com.google.maps.GeoApiContext;
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,39 +66,8 @@ public class AutenticacaoAPI {
         logger = Logger.getLogger(AutenticacaoAPI.class);
     }
 
-    /**
-     * Autenticando na conta do Twitter
-     *
-     */
-    public static void userAutentication() {
-        String[] key = getKeysCrypt();
-
-        if (key != null) {
-
-            ConfigurationBuilder config = new ConfigurationBuilder();
-            config.setDebugEnabled(true);
-            config.setPrettyDebugEnabled(true);
-            config.setOAuthConsumerKey(key[0]);
-            config.setOAuthConsumerSecret(key[1]);
-            config.setOAuthAccessToken(key[2]);
-            config.setOAuthAccessTokenSecret(key[3]);
-            
-
-            OAuthAuthorization auth = new OAuthAuthorization(config.build());
-
-            twitter = new TwitterFactory().getInstance(auth);
-            oauth = auth;
-
-            autenticado = true;
-        } else {
-            autenticado = false;
-            JOptionPane.showMessageDialog(null, "Você não possui credenciais para o Twitter!");
-        }
-
-    }
-    
     public static void appAutentication() {
-        String[] key = getKeysCrypt();
+        String[] key = descriptografar();
 
         if (key != null) {
 
@@ -108,9 +76,9 @@ public class AutenticacaoAPI {
                 builder.setApplicationOnlyAuthEnabled(true);
                 builder.setOAuthConsumerKey(key[0]);
                 builder.setOAuthConsumerSecret(key[1]);
-                
+
                 OAuth2Token token = new TwitterFactory(builder.build()).getInstance().getOAuth2Token();
-                
+
                 ConfigurationBuilder config = new ConfigurationBuilder();
                 config.setDebugEnabled(true);
                 config.setPrettyDebugEnabled(true);
@@ -119,11 +87,11 @@ public class AutenticacaoAPI {
                 config.setOAuthConsumerSecret(key[1]);
                 config.setOAuth2TokenType(token.getTokenType());
                 config.setOAuth2AccessToken(token.getAccessToken());
-                
+
                 twitter = new TwitterFactory(config.build()).getInstance();
-                
+
                 autenticado = true;
-                
+
             } catch (TwitterException ex) {
                 java.util.logging.Logger.getLogger(AutenticacaoAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -154,7 +122,7 @@ public class AutenticacaoAPI {
      *
      * @return
      */
-    private static String[] getKeysCrypt() {
+    private static String[] descriptografar() {
         GeradorCredencial crypt = new GeradorCredencial();
 
         File arquivo;
@@ -162,7 +130,7 @@ public class AutenticacaoAPI {
         try {
 
             arquivo = new File(System.getProperty("user.home") + "/SherlockTM/Config_Auth/config.cfg");
-                        
+
             if (arquivo.isFile()) {
                 InputStream leitor = new FileInputStream(arquivo);
                 int tamanho = (int) arquivo.length();
@@ -171,7 +139,7 @@ public class AutenticacaoAPI {
 
                 String chave = crypt.decriptar(bytes, CriptografiaDeChaves.getKey());
                 String[] chaves = chave.split("\\|");
-                
+
                 return chaves;
             } else {
                 return null;
@@ -183,6 +151,33 @@ public class AutenticacaoAPI {
         } catch (IOException e) {
             logger.error(e);
             JOptionPane.showMessageDialog(null, e.getLocalizedMessage());
+        }
+        return null;
+    }
+
+    private static String descriptografar(String key) {
+        InputStream reader = null;
+        try {
+            GeradorCredencial crypt = new GeradorCredencial();
+            reader = new FileInputStream(key);
+            int tamanho = (int) key.length();
+            byte[] bytes = new byte[tamanho];
+            reader.read(bytes, 0, tamanho);
+            
+            String chave = crypt.decriptar(bytes, CriptografiaDeChaves.getKey());
+            
+            return chave;
+            
+        } catch (FileNotFoundException ex) {
+            java.util.logging.Logger.getLogger(AutenticacaoAPI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(AutenticacaoAPI.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(AutenticacaoAPI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return null;
     }
@@ -206,7 +201,7 @@ public class AutenticacaoAPI {
                 String chave = crypt.decriptar(bytes, CriptografiaDeChaves.getKey());
 
                 return chave;
-            }else{
+            } else {
                 return null;
             }
 

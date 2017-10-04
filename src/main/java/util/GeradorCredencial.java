@@ -53,6 +53,10 @@ public class GeradorCredencial extends CriptografiaDeChaves {
             diretorio.mkdirs();
         }
     }
+    
+    public byte[] criptografar(String key){
+        return encriptar(key);
+    }
 
     public void gerarArquivoCrypto(String keys, String caminho) {
         try {

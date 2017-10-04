@@ -24,7 +24,7 @@
  */
 package engines;
 
-import entidade.TweetTR;
+import entidade.TweetStream;
 import entidade.Tweet;
 import com.dropbox.core.DbxException;
 import dao.TweetDAO;
@@ -48,7 +48,7 @@ import javax.swing.JTable;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import tablemodel.TableModel;
+import tablemodel.TableModelSearch;
 import twitter4j.FilterQuery;
 import twitter4j.RateLimitStatusEvent;
 import twitter4j.RateLimitStatusListener;
@@ -60,7 +60,6 @@ import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import util.AutenticacaoAPI;
 import util.DetectaSistema;
-import util.GerenciadorLimite;
 import util.ManipuladorTabela;
 import util.PreprocessoStrings;
 import weka.core.Attribute;
@@ -82,10 +81,10 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
     private long contador = 0;
     private Date dataFinal;
     private int linha;
-    private TableModel tabelaTweets;
+    private TableModelSearch tabelaTweets;
     private JLabel labelSt;
 
-    private TweetTR containerTweet;
+    private TweetStream containerTweet;
     private GerenciadorLimite limite;
 
     private FilterQuery filter;
@@ -98,22 +97,22 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         InputStream in = this.getClass().getResourceAsStream("/log4j/log4j.properties");
         PropertyConfigurator.configure(in);
         this.logger = Logger.getLogger(TwitterStreamCollect.class);
-        tabelaTweets = new TableModel();
+        tabelaTweets = new TableModelSearch();
         limite = new GerenciadorLimite(labelSt);
         filename = query;
         tDAO = new TweetDAO();
     }
 
 
-    public TableModel getTabelaTweets() {
+    public TableModelSearch getTabelaTweets() {
         return tabelaTweets;
     }
 
-    public TweetTR getContainerTweet() {
+    public TweetStream getContainerTweet() {
         return containerTweet;
     }
 
-    public void setContainerTweet(TweetTR containerTweet) {
+    public void setContainerTweet(TweetStream containerTweet) {
         this.containerTweet = containerTweet;
     }
 
@@ -121,7 +120,7 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         this.linha = linha;
     }
 
-    public void setContainer(TweetTR containerTweet) {
+    public void setContainer(TweetStream containerTweet) {
         this.containerTweet = containerTweet;
     }
 

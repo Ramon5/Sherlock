@@ -24,13 +24,11 @@
  */
 package view;
 
-import control.DropBoxController;
-import control.TwitterController;
+import control.TwitterSearchController;
 import control.TwitterStreamController;
 import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import engines.DropBox;
 import entidade.Coleta;
 import java.util.Calendar;
 import util.AutenticacaoAPI;
@@ -78,26 +76,17 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         campoBusca = new javax.swing.JTextField();
-        btnBuscar = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         lbTwitter = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         chckbxColetaRetroativa = new javax.swing.JCheckBox();
         cbDia = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
-        btnLimpar = new javax.swing.JButton();
         chkRetweet = new javax.swing.JCheckBox();
         painelColeta = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        lbStatus = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        lbQuantidade = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        lbData = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
-        lbCloud = new javax.swing.JLabel();
-        scroll = new javax.swing.JScrollPane();
-        table = new javax.swing.JTable();
         jPanel7 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -116,17 +105,11 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         lbTwitter1 = new javax.swing.JLabel();
         painelCloudReal = new javax.swing.JPanel();
         lbCloudReal = new javax.swing.JLabel();
-        jPanel10 = new javax.swing.JPanel();
-        jPanel11 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuOpcoes = new javax.swing.JMenu();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem7 = new javax.swing.JMenuItem();
         menuSair = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        rdDrop = new javax.swing.JRadioButtonMenuItem();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
@@ -232,8 +215,6 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         lbData.setText("...");
         painelColeta.add(lbData);
 
-        jPanel6.add(lbCloud);
-
         table.setModel(manipulador);
         scroll.setViewportView(table);
 
@@ -256,10 +237,8 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 603, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
@@ -274,8 +253,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(109, 109, 109))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
@@ -285,7 +263,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(painelColeta, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(212, Short.MAX_VALUE))
+                .addContainerGap(217, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                     .addGap(297, 297, 297)
@@ -427,32 +405,6 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
 
         jTabbedPane1.addTab("Coleta em Tempo Real", jPanel7);
 
-        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
-        jPanel10.setLayout(jPanel10Layout);
-        jPanel10Layout.setHorizontalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 908, Short.MAX_VALUE)
-        );
-        jPanel10Layout.setVerticalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 488, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Estatísticas", jPanel10);
-
-        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
-        jPanel11.setLayout(jPanel11Layout);
-        jPanel11Layout.setHorizontalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 911, Short.MAX_VALUE)
-        );
-        jPanel11Layout.setVerticalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 488, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Clusterização", jPanel11);
-
         menuOpcoes.setText("Configurações");
 
         jMenu4.setText("Autenticação");
@@ -465,22 +417,6 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         });
         jMenu4.add(jMenuItem1);
 
-        jMenuItem2.setText("DropBox");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
-            }
-        });
-        jMenu4.add(jMenuItem2);
-
-        jMenuItem7.setText("GoogleAPI");
-        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem7ActionPerformed(evt);
-            }
-        });
-        jMenu4.add(jMenuItem7);
-
         menuOpcoes.add(jMenu4);
 
         menuSair.setText("Sair");
@@ -492,23 +428,6 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         menuOpcoes.add(menuSair);
 
         jMenuBar1.add(menuOpcoes);
-
-        jMenu2.setText("Nuvem");
-
-        rdDrop.setText("DropBox");
-        rdDrop.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                rdDropItemStateChanged(evt);
-            }
-        });
-        rdDrop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rdDropActionPerformed(evt);
-            }
-        });
-        jMenu2.add(rdDrop);
-
-        jMenuBar1.add(jMenu2);
 
         jMenu1.setText("Ferramentas");
 
@@ -585,16 +504,6 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
 
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        DropTokenGUI guiDrop = new DropTokenGUI(this, rootPaneCheckingEnabled);
-        guiDrop.setLocationRelativeTo(this);
-        guiDrop.setVisible(true);
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
-
-    private void rdDropActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdDropActionPerformed
-
-    }//GEN-LAST:event_rdDropActionPerformed
-
     private void menuSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSobreActionPerformed
         SobreGUI guiAbout = new SobreGUI(this, rootPaneCheckingEnabled);
         guiAbout.setLocationRelativeTo(this);
@@ -607,12 +516,8 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
     }//GEN-LAST:event_menuSairActionPerformed
 
 
-    private void rdDropItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rdDropItemStateChanged
-        DropBoxController.usarDropBox(rdDrop.isSelected());
-    }//GEN-LAST:event_rdDropItemStateChanged
-
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        AjudaGUI ajudaGui = new AjudaGUI(this, rootPaneCheckingEnabled);
+        TutorialGUI ajudaGui = new TutorialGUI(this, rootPaneCheckingEnabled);
         ajudaGui.setLocationRelativeTo(this);
         ajudaGui.setVisible(true);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
@@ -623,41 +528,16 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         utilitario.setVisible(true);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
-    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        AuthGoogleGUI guiCred = new AuthGoogleGUI(this, rootPaneCheckingEnabled);
-        guiCred.setLocationRelativeTo(this);
-        guiCred.setVisible(true);
-    }//GEN-LAST:event_jMenuItem7ActionPerformed
+    
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        ConvertWekaGUI weka = new ConvertWekaGUI(this, rootPaneCheckingEnabled);
+        weka.setLocationRelativeTo(this);
+        weka.setVisible(true);
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
 
-    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
-        limpar();
-    }//GEN-LAST:event_btnLimparActionPerformed
-
-    private void lbTwitterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbTwitterMouseClicked
-        TwitterController.irParaSite();
-    }//GEN-LAST:event_lbTwitterMouseClicked
-
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        redefinirLabels();
-        if (campoBusca.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite algum termo de busca!", "Aviso",
-                    JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            int dia = Integer.parseInt(cbDia.getSelectedItem().toString());
-            TwitterController.buscaRetroativa(campoBusca.getText(), dia, chckbxColetaRetroativa.isSelected(), chkRetweet.isSelected());
-        }
-
-    }//GEN-LAST:event_btnBuscarActionPerformed
-
-    private void campoBuscaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_campoBuscaKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            btnBuscarActionPerformed(null);
-        }
-    }//GEN-LAST:event_campoBuscaKeyPressed
-
-    private void chckbxColetaRetroativaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chckbxColetaRetroativaItemStateChanged
-
-    }//GEN-LAST:event_chckbxColetaRetroativaItemStateChanged
+    private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
+        controlStream.pararColeta();
+    }//GEN-LAST:event_btnStopActionPerformed
 
     private void btnColetaRealActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnColetaRealActionPerformed
         Coleta coleta = new Coleta();
@@ -666,28 +546,46 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         controlStream.coletarStreams(coleta);
     }//GEN-LAST:event_btnColetaRealActionPerformed
 
-    private void btnCriaArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCriaArquivoActionPerformed
-        if (campoContainer.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Informe um termo de busca!");
-        } else {    
-            TwitterStreamController.criarArquivoStream(campoContainer.getText());
-        }
-    }//GEN-LAST:event_btnCriaArquivoActionPerformed
-
     private void tableTRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableTRMouseClicked
         controlStream.cliqueTBStream(evt);
     }//GEN-LAST:event_tableTRMouseClicked
 
-    
-    private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
-        controlStream.pararColeta();
-    }//GEN-LAST:event_btnStopActionPerformed
+    private void btnCriaArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCriaArquivoActionPerformed
+        if (campoContainer.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe um termo de busca!");
+        } else {
+            TwitterStreamController.criarArquivoStream(campoContainer.getText());
+        }
+    }//GEN-LAST:event_btnCriaArquivoActionPerformed
 
-    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-        ConvertWekaGUI weka = new ConvertWekaGUI(this, rootPaneCheckingEnabled);
-        weka.setLocationRelativeTo(this);
-        weka.setVisible(true);
-    }//GEN-LAST:event_jMenuItem6ActionPerformed
+    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
+        limpar();
+    }//GEN-LAST:event_btnLimparActionPerformed
+
+    private void chckbxColetaRetroativaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chckbxColetaRetroativaItemStateChanged
+
+    }//GEN-LAST:event_chckbxColetaRetroativaItemStateChanged
+
+    private void lbTwitterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbTwitterMouseClicked
+        TwitterSearchController.irParaSite();
+    }//GEN-LAST:event_lbTwitterMouseClicked
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        redefinirLabels();
+        if (campoBusca.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Digite algum termo de busca!", "Aviso",
+                JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            int dia = Integer.parseInt(cbDia.getSelectedItem().toString());
+            TwitterSearchController.buscaRetroativa(campoBusca.getText(), dia, chckbxColetaRetroativa.isSelected(), chkRetweet.isSelected());
+        }
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void campoBuscaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_campoBuscaKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            btnBuscarActionPerformed(null);
+        }
+    }//GEN-LAST:event_campoBuscaKeyPressed
 
     private void limpar() {
         lbData.setText("...");
@@ -743,10 +641,10 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public static javax.swing.JButton btnBuscar;
+    public static final javax.swing.JButton btnBuscar = new javax.swing.JButton();
     public static javax.swing.JButton btnColetaReal;
     private javax.swing.JButton btnCriaArquivo;
-    public static javax.swing.JButton btnLimpar;
+    public static final javax.swing.JButton btnLimpar = new javax.swing.JButton();
     public static javax.swing.JButton btnStop;
     private javax.swing.JTextField campoBusca;
     public static javax.swing.JTextField campoContainer;
@@ -761,35 +659,28 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
-    private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane1;
-    public static javax.swing.JLabel lbCloud;
-    public static javax.swing.JLabel lbCloudReal;
-    public static javax.swing.JLabel lbData;
+    private javax.swing.JLabel lbCloudReal;
+    public static final javax.swing.JLabel lbData = new javax.swing.JLabel();
     private javax.swing.JLabel lbLogo;
-    public static javax.swing.JLabel lbQuantidade;
-    public static javax.swing.JLabel lbStatus;
+    public static final javax.swing.JLabel lbQuantidade = new javax.swing.JLabel();
+    public static final javax.swing.JLabel lbStatus = new javax.swing.JLabel();
     public static javax.swing.JLabel lbStatusReal;
     private javax.swing.JLabel lbTwitter;
     private javax.swing.JLabel lbTwitter1;
@@ -798,11 +689,10 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
     private javax.swing.JMenuItem menuSobre;
     private javax.swing.JPanel painelCloudReal;
     private javax.swing.JPanel painelColeta;
-    private javax.swing.JRadioButtonMenuItem rdDrop;
-    public static javax.swing.JScrollPane scroll;
+    public static final javax.swing.JScrollPane scroll = new javax.swing.JScrollPane();
     public static javax.swing.JScrollPane scrollPainel;
     public static javax.swing.JScrollPane scrollTR;
-    public static javax.swing.JTable table;
+    public static final javax.swing.JTable table = new javax.swing.JTable();
     public static javax.swing.JTable tableTR;
     public static javax.swing.JTable tableView;
     // End of variables declaration//GEN-END:variables
