@@ -37,6 +37,7 @@ public class Controlador {
     public static void main(String[] args) {
 
         try {
+            Class.forName("org.firebirdsql.jdbc.FBDriver");
             Properties props = new Properties();
             props.put("logoString", "SherlockTM");
             McWinLookAndFeel.setCurrentTheme(props);

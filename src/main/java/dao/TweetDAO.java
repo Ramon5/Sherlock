@@ -1,4 +1,3 @@
-
 package dao;
 
 import entidade.Coleta;
@@ -17,23 +16,21 @@ import java.util.logging.Logger;
  *
  * @author Ramon
  */
-
-
 public class TweetDAO {
-    
+
     private Connection conection;
-    private ConectionFactory factory;
+    private ConnectionFactory factory;
     private PreparedStatement stmt;
     private ResultSet result;
 
     public TweetDAO() {
-        this.factory = new ConectionFactory();        
-    }
-    
-    public boolean salvar(Tweet tweet){
+        this.factory = new ConnectionFactory();
         this.conection = factory.getConnection();
+    }
+
+    public boolean salvar(Tweet tweet) {
         try {
-            String sql = "insert into TWEET(idtweet,coleta_idcoleta,tweet,to_user_id,screenname,user_id,favorite_count,created_at,lang) values(?,?,?,?,?,?,?,?,?)";
+            String sql = "insert into TWEET(idtweet,coleta_idcoleta,tweet,to_user_id,screenname,user_id,favorite_count,created_at,lang,retweet,latitude,longitude) values(?,?,?,?,?,?,?,?,?,?,?,?)";
             stmt = conection.prepareStatement(sql);
             stmt.setLong(1, tweet.getIdTweet());
             stmt.setLong(2, tweet.getColeta().getIdColeta());
@@ -41,55 +38,85 @@ public class TweetDAO {
             stmt.setLong(4, tweet.getTo_user_id());
             stmt.setString(5, tweet.getAutor());
             stmt.setLong(6, tweet.getIdUsuario());
-            stmt.setLong(7, tweet.getFavorite_count());
+            stmt.setInt(7, tweet.getFavorite_count());
             stmt.setDate(8, new Date(tweet.getDatecreated().getTime()));
             stmt.setString(9, tweet.getLang());
-                        
-            return stmt.execute();
-            
+            stmt.setInt(10, tweet.getRetweet());
+            stmt.setDouble(11, tweet.getLatitude());
+            stmt.setDouble(12, tweet.getLongitude());
+
+            boolean save = stmt.execute();
+            stmt.close();
+
+            return save;
+
         } catch (SQLException ex) {
-            Logger.getLogger(TweetDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
         }
-        return false;
     }
-    
-    
-    public List<Tweet> getTweets(Coleta coleta){
-        this.conection = factory.getConnection();
+
+    public List<Tweet> getTweets(Coleta coleta) {
         List<Tweet> lista = new ArrayList<>();
         try {
             String sql = "select * from tweet as t inner join coleta as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ?";
             stmt = conection.prepareStatement(sql);
             stmt.setLong(1, coleta.getIdColeta());
             result = stmt.executeQuery();
-            
-            while(result.next()){
+
+            while (result.next()) {
                 Tweet t = new Tweet();
                 t.setIdTweet(result.getLong("idtweet"));
                 t.setTweet(result.getString("tweet"));
                 t.setTo_user_id(result.getLong("to_user_id"));
                 t.setAutor(result.getString("screename"));
                 t.setIdUsuario(result.getLong("user_id"));
-                t.setFavorite_count(result.getLong("favorite_count"));
+                t.setFavorite_count(result.getInt("favorite_count"));
                 t.setDatecreated(result.getDate("created_at"));
                 t.setLang(result.getString("lang"));
-                
+                t.setRetweet(result.getInt("retweet"));
+                t.setLatitude(result.getDouble("latitude"));
+                t.setLongitude(result.getDouble("longitude"));
+
                 lista.add(t);
-                
             }
+
+            stmt.close();
+            result.close();
+
             return lista;
-            
+
         } catch (SQLException ex) {
-            Logger.getLogger(TweetDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (result != null) {
+                    result.close();
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
-        return lista;
+
     }
-    
-    public void closeConnection(){
+
+    public void closeConnection() {
         try {
-            conection.close();
+            if (conection != null) {
+                conection.close();
+            }
         } catch (SQLException ex) {
-            Logger.getLogger(ConectionFactory.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
         }
     }
 }

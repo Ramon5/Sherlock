@@ -30,16 +30,18 @@ public class Tweet {
 
     private String tweet;
     private Long to_user_id;
-    private String autor; 
-    private Long idTweet;    
-    private Long idUsuario;  
-    private String lang;       
+    private String autor;
+    private Long idTweet;
+    private Long idUsuario;
+    private String lang;
     private String local;
-    private Long favorite_count;
+    private Integer favorite_count;
     private Date datecreated;
-    
+    private Integer retweet;
+    private Double latitude;
+    private Double longitude;
+
     private Coleta coleta;
-    
 
     public Long getIdTweet() {
         return idTweet;
@@ -105,11 +107,11 @@ public class Tweet {
         this.lang = lang;
     }
 
-    public Long getFavorite_count() {
+    public Integer getFavorite_count() {
         return favorite_count;
     }
 
-    public void setFavorite_count(Long favorite_count) {
+    public void setFavorite_count(Integer favorite_count) {
         this.favorite_count = favorite_count;
     }
 
@@ -121,6 +123,28 @@ public class Tweet {
         this.coleta = coleta;
     }
 
-     
-    
+    public Integer getRetweet() {
+        return retweet;
+    }
+
+    public void setRetweet(Integer retweet) {
+        this.retweet = retweet;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
 }

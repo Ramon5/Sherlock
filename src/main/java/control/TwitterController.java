@@ -40,6 +40,7 @@ import java.util.Date;
 import javax.swing.JOptionPane;
 import engines.TwitterSearch;
 import entidade.Coleta;
+import util.AutenticacaoAPI;
 import util.DetectaSistema;
 import static util.DetectaSistema.detectarSistema;
 import util.ManipuladorTabela;
@@ -52,28 +53,32 @@ import view.SherlockGUI;
 public class TwitterController implements ManipuladorTabela, DetectaSistema {
 
     public static void buscaRetroativa(String termo, int dia, boolean retroativo, boolean retweet) {
-        TwitterSearch twitter = new TwitterSearch(SherlockGUI.btnBuscar, SherlockGUI.btnLimpar);
-        twitter.setTermo(termo);
-        twitter.setLabels(SherlockGUI.lbStatus, SherlockGUI.lbQuantidade, SherlockGUI.lbData);
-        twitter.setCloud(DropBoxController.getDropBox());
-        twitter.setScroll(SherlockGUI.scroll, SherlockGUI.table);
-        twitter.setRetweet(retweet);
-        
-        Coleta coleta = new Coleta();
-        coleta.setTermo(termo);
-        coleta.setData(Calendar.getInstance().getTime());
-        ColetaDAO cDAO = new ColetaDAO();
-        coleta = cDAO.salvar(coleta);        
-        cDAO.closeConnection();
-        
-        twitter.setColeta(coleta);
+        if (AutenticacaoAPI.autenticado) {
+            TwitterSearch twitter = new TwitterSearch(SherlockGUI.btnBuscar, SherlockGUI.btnLimpar);
+            twitter.setTermo(termo);
+            twitter.setLabels(SherlockGUI.lbStatus, SherlockGUI.lbQuantidade, SherlockGUI.lbData);
+            //twitter.setCloud(DropBoxController.getDropBox());
+            twitter.setScroll(SherlockGUI.scroll, SherlockGUI.table);
+            twitter.setRetweet(retweet);
 
-        if (retroativo) {
-            twitter.setLimite(getDataLimite(dia));
-        } else {
-            twitter.setLimite(getDataAtual());
+            Coleta coleta = new Coleta();
+            coleta.setTermo(termo);
+            coleta.setData(Calendar.getInstance().getTime());
+            ColetaDAO cDAO = new ColetaDAO();
+            coleta = cDAO.salvar(coleta);
+            cDAO.closeConnection();
+
+            twitter.setColeta(coleta);
+
+            if (retroativo) {
+                twitter.setLimite(getDataLimite(dia));
+            } else {
+                twitter.setLimite(getDataAtual());
+            }
+            twitter.start();
+        }else{
+            JOptionPane.showMessageDialog(null, "Você precisa de credencias para efetuar as coletas!");
         }
-        twitter.start();
 
     }
 

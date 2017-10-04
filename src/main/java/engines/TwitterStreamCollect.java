@@ -98,8 +98,8 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
     private ArrayList<Attribute> atributos;
     private Instances instancias;
     private List<Instance> aux;
-    
-    private Coleta coleta;    
+
+    private Coleta coleta;
     private TweetDAO tDAO;
 
     public TwitterStreamCollect(String query) {
@@ -131,6 +131,9 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         atributos.add(new Attribute("LANG", (ArrayList<String>) null));
         atributos.add(new Attribute("FAVORITE_COUNT"));
         atributos.add(new Attribute("CREATED_AT", (ArrayList<String>) null));
+        atributos.add(new Attribute("RETWEET"));
+        atributos.add(new Attribute("LATITUDE"));
+        atributos.add(new Attribute("LONGITUDE"));
         //formato data
         //atributos.add(new Attribute("CREATED_AT", "dd-MM-yyyy HH:mm:ss"));
     }
@@ -163,16 +166,17 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         this.labelSt = labelSt;
     }
 
-    public void setColeta(Coleta coleta){
+    public void setColeta(Coleta coleta) {
         this.coleta = coleta;
     }
+
     /**
      * Método responsável por realizar a coleta em tempo real
      */
     public void collectRealTime() {
 
         twitterSt = new TwitterStreamFactory().getInstance(AutenticacaoAPI.oauth);
-        iniciarContainers();
+        //iniciarContainers();
         containerTweet.setAtivo(true);
         containerTweet.setDataInicio(getData());
         manipuladorTR.atualizar();
@@ -260,17 +264,10 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
      * @param tweet
      */
     public void coletar(Status tweet) {
-        try {
-
-            tabelaTweets.addTweet(getTweet(tweet));
-            scroll.getVerticalScrollBar().setValue(table.getHeight());
-            gravarTweet(tweet);
-            criarInstancias(tweet);
-
-        } catch (IOException ex) {
-            logger.error(ex);
-            JOptionPane.showMessageDialog(null, "Erro: " + ex.getLocalizedMessage());
-        }
+        tabelaTweets.addTweet(getTweet(tweet));
+        scroll.getVerticalScrollBar().setValue(table.getHeight());
+        //gravarTweet(tweet);
+        //criarInstancias(tweet);
     }
 
     /**
@@ -290,6 +287,18 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         valorDeInstancia[6] = tweet.getFavoriteCount();
         //valorDeInstancia[8] = atributos.get(8).parseDate(String.valueOf(dataHora.format(tweet.getCreatedAt())));
         valorDeInstancia[7] = atributos.get(7).addStringValue(String.valueOf(dataHora.format(tweet.getCreatedAt())));
+        if (tweet.isRetweet()) {
+            valorDeInstancia[8] = 1;
+        } else {
+            valorDeInstancia[8] = 0;
+        }
+        if (tweet.getGeoLocation() != null) {
+            valorDeInstancia[9] = tweet.getGeoLocation().getLatitude();
+            valorDeInstancia[10] = tweet.getGeoLocation().getLongitude();
+        } else {
+            valorDeInstancia[9] = 0.0;
+            valorDeInstancia[10] = 0.0;
+        }
         Instance instancia = new DenseInstance(1.0, valorDeInstancia);
         aux.add(instancia);
     }
@@ -311,10 +320,23 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         tw.setIdUsuario(status.getUser().getId());
         tw.setTweet(status.getText());
         tw.setTo_user_id(status.getInReplyToUserId());
-        tw.setFavorite_count((long)status.getFavoriteCount());
+        tw.setFavorite_count(status.getFavoriteCount());
         tw.setLang(status.getLang());
+        if (status.isRetweet()) {
+            tw.setRetweet(1);
+        } else {
+            tw.setRetweet(0);
+        }
+
+        if (status.getGeoLocation() != null) {
+            tw.setLatitude(status.getGeoLocation().getLatitude());
+            tw.setLongitude(status.getGeoLocation().getLongitude());
+        } else {
+            tw.setLatitude(0.0);
+            tw.setLongitude(0.0);
+        }
         tw.setColeta(coleta);
-        
+
         tDAO.salvar(tw);
 
         return tw;
@@ -328,7 +350,7 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
      */
     private void gravarTweet(Status tweet) throws IOException {
         String texto = tweet.getText().replaceAll(Pattern.quote("\""), "'");
-        texto = texto.replace("\n", "").replace("\r", "");        
+        texto = texto.replace("\n", "").replace("\r", "");
         texto = texto.replaceAll("\\|", " ");
         bufferTweet.append(texto).append("|")
                 .append(String.valueOf(tweet.getInReplyToUserId())).append("|")
@@ -350,7 +372,7 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         try {
             fileWriter = new FileWriterWithEncoding(containerTweet, StandardCharsets.UTF_8, true);
             bufferTweet = new BufferedWriter(fileWriter);
-            bufferTweet.append("TEXT|TO_USER_ID|SCREEN_NAME|ID|USER_ID|LANG|FAVORITE_COUNT|CREATED_AT");
+            bufferTweet.append("TEXT|TO_USER_ID|SCREEN_NAME|ID|USER_ID|LANG|RETWEET|LATITUDE|LONGITUDE|FAVORITE_COUNT|CREATED_AT");
             bufferTweet.newLine();
             bufferTweet.flush();
 
@@ -371,22 +393,23 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
 
             twitterSt.cleanUp();
             containerTweet.setAtivo(false);
-            encerrarStreams();
+            //encerrarStreams();
 
             if (dataFinal != null) {
                 containerTweet.setDataFim(dataFormato.format(dataFinal));
-                novoNomeColeta = renomearColeta(dataFinal);
+                //novoNomeColeta = renomearColeta(dataFinal);
             }
-            tDAO.closeConnection();
 
         } catch (IllegalStateException ex) {
             logger.error(ex);
             JOptionPane.showMessageDialog(null, "Erro: " + ex.getLocalizedMessage());
+        } finally {
+            tDAO.closeConnection();
         }
 
-        if (cloud != null) {
+        /*if (cloud != null) {
             salvarNaNuvem();
-        }
+        }*/
 
         //inicializando a stream de instancias
         /*instancias = new Instances(query, atributos, aux.size());
@@ -397,7 +420,6 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         }
 
         salvarArff();*/
-
     }
 
     /**
@@ -405,8 +427,12 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
      */
     public void encerrarStreams() {
         try {
-            fileWriter.close();
-            bufferTweet.close();
+            if(fileWriter != null){
+                fileWriter.close();
+            }
+            if(bufferTweet != null){
+                bufferTweet.close();
+            }
 
         } catch (IOException ex) {
             logger.error(ex);

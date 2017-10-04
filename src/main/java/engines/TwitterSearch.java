@@ -79,32 +79,31 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
     private JScrollPane scroll;
     private JTable table;
 
-    private BufferedWriter bufferTweet;
-
     private Query query;
     private QueryResult result;
     private List<Status> listTweets;
     private final Logger logger;
-
     private Date dataLimite;
-    private GerenciadorDiretorios manageDir;
-    private GerenciadorLimite limite;
 
-    private Object cloud;
-
+    /* isolar em classe para gerar o corpus em diferentes extensoes
+    
+    private BufferedWriter bufferTweet;
+    private GerenciadorDiretorios manageDir;    
     private FileWriterWithEncoding fileWriter;
-
-    private boolean retweet;
-
-    private String novoNomeColeta;
+     */
+    //private Object cloud;
+    //private String novoNomeColeta;
+    private GerenciadorLimite limite;
     private SimpleDateFormat dataHora;
     private Date dataRef;
-    private boolean limitado;
 
+    /* isolar em uma classe para gerar os arquivos para Weka
+    
     private ArrayList<Attribute> atributos;
     private Instances instancias;
     private List<Instance> aux;
-    
+     */
+    private boolean retweet;
     private Coleta coleta;
     private TweetDAO tDAO;
 
@@ -122,36 +121,32 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         PropertyConfigurator.configure(in);
         this.logger = Logger.getLogger(TwitterSearch.class);
         dataHora = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        limitado = false;
         criarListener();
-        construirAtributos();
+        //construirAtributos();
         tDAO = new TweetDAO();
     }
 
     /**
      * Cria os atributos que serão usados no arquivo .arff inicia a lista que
      * irá armazenar as instancias de tweets
+     *
+     * private void construirAtributos() { atributos = new ArrayList<>(); aux =
+     * new ArrayList<>(); atributos.add(new Attribute("TEXT",
+     * (ArrayList<String>) null)); atributos.add(new Attribute("TO_USER_ID"));
+     * atributos.add(new Attribute("USER", (ArrayList<String>) null));
+     * atributos.add(new Attribute("ID")); atributos.add(new
+     * Attribute("FROM_USER_ID")); atributos.add(new Attribute("LANG",
+     * (ArrayList<String>) null)); atributos.add(new
+     * Attribute("FAVORITE_COUNT")); atributos.add(new Attribute("CREATED_AT",
+     * (ArrayList<String>) null)); //formato data //atributos.add(new
+     * Attribute("CREATED_AT", "dd-MM-yyyy HH:mm:ss"));
+     *
+     * }
      */
-    private void construirAtributos() {
-        atributos = new ArrayList<>();
-        aux = new ArrayList<>();
-        atributos.add(new Attribute("TEXT", (ArrayList<String>) null));
-        atributos.add(new Attribute("TO_USER_ID"));
-        atributos.add(new Attribute("USER", (ArrayList<String>) null));
-        atributos.add(new Attribute("ID"));
-        atributos.add(new Attribute("FROM_USER_ID"));
-        atributos.add(new Attribute("LANG", (ArrayList<String>) null));
-        atributos.add(new Attribute("FAVORITE_COUNT"));
-        atributos.add(new Attribute("CREATED_AT", (ArrayList<String>) null));
-        //formato data
-        //atributos.add(new Attribute("CREATED_AT", "dd-MM-yyyy HH:mm:ss"));
-
-    }
-
-    public void setColeta(Coleta coleta){
+    public void setColeta(Coleta coleta) {
         this.coleta = coleta;
     }
-    
+
     public void setRetweet(boolean ativo) {
         this.retweet = ativo;
 
@@ -165,10 +160,9 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         this.dataLimite = dataLimite;
     }
 
-    public void setCloud(Object cloud) {
+    /*public void setCloud(Object cloud) {
         this.cloud = cloud;
-    }
-
+    }*/
     public void setScroll(JScrollPane scroll, JTable table) {
         this.scroll = scroll;
         this.table = table;
@@ -200,7 +194,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
 
             @Override
             public void onRateLimitReached(RateLimitStatusEvent event) {
-                limitado = event.isAccountRateLimitStatus() || event.isIPRateLimitStatus();
+                limite.checarLimite(event);
             }
         });
     }
@@ -210,35 +204,28 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
      */
     @Override
     public void run() {
-        //Se a aplicação está autorizada a coletar então executa abaixo
-        if (AutenticacaoAPI.autenticado) {
-            botao.setEnabled(false);
-            botaoLimpar.setEnabled(false);
 
-            status.setText("Coletando...");
+        botao.setEnabled(false);
+        botaoLimpar.setEnabled(false);
 
-            manageDir = new GerenciadorDiretorios(termo, false);
-            manageDir.criaArquivoColeta();
-            iniciarGravadores();
+        status.setText("Coletando...");
 
-            //filtra retweets de acordo com o parametro passado
-            if (retweet) {
-                query = new Query(termo).lang("pt").count(100);
-            } else {
-                query = new Query(termo + " -filter:retweets").lang("pt").count(100);
-            }
-            //coleta de acordo com o tema informado
-            efetuarColeta(query);
-
-            if (cloud != null) {
-                salvarNaNuvem();
-            }
-            
-            this.interrupt();
-
+        //manageDir = new GerenciadorDiretorios(termo, false);
+        //manageDir.criaArquivoColeta();
+        //iniciarGravadores();
+        //filtra retweets de acordo com o parametro passado
+        if (retweet) {
+            query = new Query(termo).lang("pt").count(100);
         } else {
-            JOptionPane.showMessageDialog(null, "Não foi possível logar! Verifique o arquivo de log");
+            query = new Query(termo + " -filter:retweets").lang("pt").count(100);
         }
+        //coleta de acordo com o tema informado
+        efetuarColeta(query);
+
+        /*if (cloud != null) {
+                salvarNaNuvem();
+            }*/
+        this.interrupt();
 
     }
 
@@ -280,47 +267,40 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
 
                     manipulador.addTweet(getTweet(tweet));
                     scroll.getVerticalScrollBar().setValue(table.getHeight());
-                    gravarTweet(tweet);
+                    //gravarTweet(tweet);
                     quantidade.setText(String.valueOf(count));
                     max_id = Math.min(tweet.getId(), max_id);
                     dataRef = tweet.getCreatedAt();
-                    
-                    
+                    count++;
+
                 }
-                count+=listTweets.size();
+
                 listTweets.clear();
-                
+
                 //evita que sejam capturados tweets que já foram processados
                 query.setMaxId(max_id - 1);
 
                 //Condicao de parada; verifica se a data limite foi atingida ou se nenhum termo foi encontrado
             } while (dataRef.after(dataLimite) && finalizado > 0);
 
-            //inicializando a stream de instancias
+            /*inicializando a stream de instancias
             instancias = new Instances(termo, atributos, aux.size());
 
             //preenchendo o stream com as instancias de tweets recuperados
             for (Instance i : aux) {
                 instancias.add(i);
-            }
-            //hanilita os botões na tela principal
-            habilitarComandos(sdf2.format(dataRef));
+            }*/
 
-        } catch (TwitterException e) {
+        } catch (TwitterException e ) {
             if (e.exceededRateLimitation()) {
                 logger.error(e);
 
             } else if (e.resourceNotFound()) {
                 logger.error(e);
-                habilitarComandos(sdf2.format(dataRef));
             }
 
-        } catch (IOException e) {
-            logger.error(e);
-            JOptionPane.showMessageDialog(null, e.getLocalizedMessage());
-        } catch (NullPointerException ex) {
-            logger.error(ex);
-            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        }finally{
+            tDAO.closeConnection();
             habilitarComandos(sdf2.format(dataRef));
         }
     }
@@ -330,51 +310,50 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
      * dados que serão populados no arquivo .arff (Weka Cluster)
      *
      * @param tweet
+     *
+     * private void criarInstancias(Status tweet) { double[] valorDeInstancia =
+     * new double[atributos.size()]; valorDeInstancia[0] =
+     * atributos.get(0).addStringValue(PreprocessoStrings.processar(tweet.getText(),
+     * true)); valorDeInstancia[1] = tweet.getInReplyToUserId();
+     * valorDeInstancia[2] =
+     * atributos.get(2).addStringValue(tweet.getUser().getScreenName());
+     * valorDeInstancia[3] = tweet.getId(); valorDeInstancia[4] =
+     * tweet.getUser().getId(); valorDeInstancia[5] =
+     * atributos.get(5).addStringValue(tweet.getLang()); valorDeInstancia[6] =
+     * tweet.getFavoriteCount(); //valorDeInstancia[7] =
+     * atributos.get(7).parseDate(String.valueOf(dataHora.format(tweet.getCreatedAt())));
+     * valorDeInstancia[7] =
+     * atributos.get(7).addStringValue(String.valueOf(dataHora.format(tweet.getCreatedAt())));
+     * Instance instancia = new DenseInstance(1.0, valorDeInstancia);
+     * aux.add(instancia);
+     *
+     * }
      */
-    private void criarInstancias(Status tweet) {
-        double[] valorDeInstancia = new double[atributos.size()];
-        valorDeInstancia[0] = atributos.get(0).addStringValue(PreprocessoStrings.processar(tweet.getText(), true));
-        valorDeInstancia[1] = tweet.getInReplyToUserId();
-        valorDeInstancia[2] = atributos.get(2).addStringValue(tweet.getUser().getScreenName());
-        valorDeInstancia[3] = tweet.getId();
-        valorDeInstancia[4] = tweet.getUser().getId();
-        valorDeInstancia[5] = atributos.get(5).addStringValue(tweet.getLang());
-        valorDeInstancia[6] = tweet.getFavoriteCount();
-        //valorDeInstancia[7] = atributos.get(7).parseDate(String.valueOf(dataHora.format(tweet.getCreatedAt())));
-        valorDeInstancia[7] = atributos.get(7).addStringValue(String.valueOf(dataHora.format(tweet.getCreatedAt())));
-        Instance instancia = new DenseInstance(1.0, valorDeInstancia);
-        aux.add(instancia);
-
-    }
-
     /**
      * Salva os tweets no arquivo csv
      *
      * @param tweet
      * @throws IOException
+     *
+     * private void gravarTweet(Status tweet) throws IOException { String texto
+     * = tweet.getText().replaceAll("\"", "'"); texto = texto.replaceAll("\\|",
+     * " "); texto = texto.replace("\n", "").replace("\r", ""); texto =
+     * PreprocessoStrings.processar(texto, true);
+     * /*bufferTweet.append(texto).append("|").append(String.valueOf(tweet.getId())).append("|").
+     * append(tweet.getUser().getScreenName()).append("|").append(String.valueOf(dataHora.format(tweet.getCreatedAt())));
+     * bufferTweet.append(texto).append("|")
+     * .append(String.valueOf(tweet.getInReplyToUserId())).append("|")
+     * .append(tweet.getUser().getScreenName()).append("|")
+     * .append(String.valueOf(tweet.getId())).append("|")
+     * .append(String.valueOf(tweet.getUser().getId())).append("|")
+     * .append(String.valueOf(tweet.getLang())).append("|")
+     * .append(String.valueOf(tweet.getFavoriteCount())).append("|")
+     * .append(String.valueOf(tweet.getCreatedAt()));
+     *
+     * bufferTweet.newLine(); bufferTweet.flush(); criarInstancias(tweet);
+     *
+     * }
      */
-    private void gravarTweet(Status tweet) throws IOException {
-        String texto = tweet.getText().replaceAll("\"", "'");
-        texto = texto.replaceAll("\\|", " ");
-        texto = texto.replace("\n", "").replace("\r", "");
-        texto = PreprocessoStrings.processar(texto, true);
-        /*bufferTweet.append(texto).append("|").append(String.valueOf(tweet.getId())).append("|").
-                append(tweet.getUser().getScreenName()).append("|").append(String.valueOf(dataHora.format(tweet.getCreatedAt())));*/
-        bufferTweet.append(texto).append("|")
-                .append(String.valueOf(tweet.getInReplyToUserId())).append("|")
-                .append(tweet.getUser().getScreenName()).append("|")
-                .append(String.valueOf(tweet.getId())).append("|")
-                .append(String.valueOf(tweet.getUser().getId())).append("|")
-                .append(String.valueOf(tweet.getLang())).append("|")
-                .append(String.valueOf(tweet.getFavoriteCount())).append("|")
-                .append(String.valueOf(tweet.getCreatedAt()));
-
-        bufferTweet.newLine();
-        bufferTweet.flush();
-        criarInstancias(tweet);
-
-    }
-
     /**
      * Retorna a data limite no padrão da API
      *
@@ -401,13 +380,25 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         tw.setIdUsuario(status.getUser().getId());
         tw.setTweet(status.getText());
         tw.setTo_user_id(status.getInReplyToUserId());
-        tw.setFavorite_count((long)status.getFavoriteCount());
+        tw.setFavorite_count(status.getFavoriteCount());
         tw.setLang(status.getLang());
+        if (status.isRetweet()) {
+            tw.setRetweet(1);
+        } else {
+            tw.setRetweet(0);
+        }
+
+        if (status.getGeoLocation() != null) {
+            tw.setLatitude(status.getGeoLocation().getLatitude());
+            tw.setLongitude(status.getGeoLocation().getLongitude());
+        } else {
+            tw.setLatitude(0.0);
+            tw.setLongitude(0.0);
+        }
         tw.setColeta(coleta);
-        
+
         tDAO.salvar(tw);
-        tDAO.closeConnection();
-        
+
         return tw;
     }
 
@@ -416,12 +407,11 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
      */
     private void habilitarComandos(String data) {
         status.setText("Coleta finalizada");
-        closeStreams();
-        novoNomeColeta = renomearColeta(dataRef);
+        //closeStreams();
+        // novoNomeColeta = renomearColeta(dataRef);
         botao.setEnabled(true);
         botaoLimpar.setEnabled(true);
         ultimaData.setText(data);
-        //tDAO.closeConnection();
         //salvarArff();
         mensagem();
 
@@ -429,18 +419,15 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
 
     /**
      * Grava o arquivo .arff no disco rígido
-     */
-    private void salvarArff() {
-        try {
-            ArffSaver saver = new ArffSaver();
-            saver.setInstances(instancias);
-            saver.setFile(new File(manageDir.getArquivo().getParent() + "/" + termo + ".arff"));
-            saver.writeBatch();
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(TwitterSearch.class.getName()).log(Level.SEVERE, null, ex);
-        }
+     *
+     * private void salvarArff() { try { ArffSaver saver = new ArffSaver();
+     * saver.setInstances(instancias); saver.setFile(new
+     * File(manageDir.getArquivo().getParent() + "/" + termo + ".arff"));
+     * saver.writeBatch(); } catch (IOException ex) {
+     * java.util.logging.Logger.getLogger(TwitterSearch.class.getName()).log(Level.SEVERE,
+     * null, ex); }
     }
-
+     */
     /**
      * Informativo do término da coleta
      */
@@ -456,75 +443,58 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
 
     /**
      * Inicializa as os streams responsáveis por gravar os tweets no arquivo
-     */
-    private void iniciarGravadores() {
-        try {
-            fileWriter = new FileWriterWithEncoding(manageDir.getArquivo(), StandardCharsets.UTF_8, true);
-            bufferTweet = new BufferedWriter(fileWriter);
-            bufferTweet.append("TEXT|TO_USER_ID|SCREEN_NAME|ID|USER_ID|LANG|FAVORITE_COUNT|CREATED_AT");
-            bufferTweet.newLine();
-            bufferTweet.flush();
-
-        } catch (IOException ex) {
-            logger.error(ex);
-        }
+     *
+     * private void iniciarGravadores() { try { fileWriter = new
+     * FileWriterWithEncoding(manageDir.getArquivo(), StandardCharsets.UTF_8,
+     * true); bufferTweet = new BufferedWriter(fileWriter);
+     * bufferTweet.append("TEXT|TO_USER_ID|SCREEN_NAME|ID|USER_ID|LANG|RETWEET|LATITUDE|LONGITUDE|FAVORITE_COUNT|CREATED_AT");
+     * bufferTweet.newLine(); bufferTweet.flush();
+     *
+     * } catch (IOException ex) { logger.error(ex); }
     }
-
+     */
     /**
      * Renomeando o arquivo de coleta após o término
      *
      * @param dataRef
-     */
-    private String renomearColeta(Date dataRef) {
-        try {
-            SimpleDateFormat formatoColeta = new SimpleDateFormat("dd-MM-yyyy");
-            File coleta = new File(manageDir.getArquivo().getAbsolutePath());
-            StringBuilder str = new StringBuilder();
-
-            str.append(manageDir.getArquivo().getParent()).append(FileSystems.getDefault().getSeparator())
-                    .append(termo).append("(")
-                    .append(formatoColeta.format(dataRef)).append(" a ").append(formatoColeta.format(data.getTime())).append(")");
-
-            String novoNome = str.toString();
-            File coletaRenomeada = new File(novoNome + "-retroativo.csv");
-
-            coleta.renameTo(coletaRenomeada);
-            return coletaRenomeada.getName();
-
-        } catch (Exception e) {
-            logger.error(e);
-            JOptionPane.showMessageDialog(null, "Erro: " + e.getLocalizedMessage());
-        }
-        return null;
+     *
+     * private String renomearColeta(Date dataRef) { try { SimpleDateFormat
+     * formatoColeta = new SimpleDateFormat("dd-MM-yyyy"); File coleta = new
+     * File(manageDir.getArquivo().getAbsolutePath()); StringBuilder str = new
+     * StringBuilder();
+     *
+     * str.append(manageDir.getArquivo().getParent()).append(FileSystems.getDefault().getSeparator())
+     * .append(termo).append("(")
+     * .append(formatoColeta.format(dataRef)).append(" a
+     * ").append(formatoColeta.format(data.getTime())).append(")");
+     *
+     * String novoNome = str.toString(); File coletaRenomeada = new
+     * File(novoNome + "-retroativo.csv");
+     *
+     * coleta.renameTo(coletaRenomeada); return coletaRenomeada.getName();
+     *
+     * } catch (Exception e) { logger.error(e);
+     * JOptionPane.showMessageDialog(null, "Erro: " + e.getLocalizedMessage());
+     * } return null;
     }
-
+     */
     /**
      * Salva a coleta corrente no Dropbox
-     */
-    private void salvarNaNuvem() {
-        Calendar mes = Calendar.getInstance();
-        if (cloud instanceof DropBox) {
-            DropBox drop = (DropBox) cloud;
-            try {
-                drop.upload(System.getProperty("user.home") + "/SherlockTM/Dataset/" + manageDir.getDirRaiz(mes) + "/" + termo, novoNomeColeta + ".csv");
-
-            } catch (DbxException | IOException e) {
-                logger.error(e);
-                JOptionPane.showMessageDialog(null, "Erro: " + e.getLocalizedMessage());
-            }
-        }
-    }
-
-    /**
+     *
+     * private void salvarNaNuvem() { Calendar mes = Calendar.getInstance(); if
+     * (cloud instanceof DropBox) { DropBox drop = (DropBox) cloud; try {
+     * drop.upload(System.getProperty("user.home") + "/SherlockTM/Dataset/" +
+     * manageDir.getDirRaiz(mes) + "/" + termo, novoNomeColeta + ".csv");
+     *
+     * } catch (DbxException | IOException e) { logger.error(e);
+     * JOptionPane.showMessageDialog(null, "Erro: " + e.getLocalizedMessage());
+     * } } }
+     *
+     * /**
      * Encerra os streams de gravação
-     */
-    private void closeStreams() {
-        try {
-            fileWriter.close();
-            bufferTweet.close();
-        } catch (IOException ex) {
-            logger.error(ex);
-        }
+     *
+     * private void closeStreams() { try { fileWriter.close();
+     * bufferTweet.close(); } catch (IOException ex) { logger.error(ex); }
     }
-
+     */
 }
