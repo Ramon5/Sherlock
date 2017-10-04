@@ -26,11 +26,15 @@ package view;
 
 import control.TwitterSearchController;
 import control.TwitterStreamController;
+import dao.ChaveDAO;
+import entidade.Chave;
 import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import entidade.Coleta;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import util.AutenticacaoAPI;
 import util.DetectaSistema;
 import util.ManipuladorTabela;
@@ -44,6 +48,8 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
    
     
     private final TwitterStreamController controlStream;
+    public static List<Chave> keys;
+    private ChaveDAO cDAO;
     
     /**
      * Creates new form SherlockGUI
@@ -51,14 +57,17 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
     public SherlockGUI() {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         initComponents();
+        keys = new ArrayList<>();
+        cDAO = new ChaveDAO();
         autenticar();
         TwitterStreamController.instanciarAtivos();  
         controlStream = new TwitterStreamController();
     }
 
     private void autenticar(){
-        AutenticacaoAPI.appAutentication();
+        AutenticacaoAPI.appAutentication(keys.get(0));
         //AutenticacaoAPI.autenticarMaps();
+        
     }
     /**
      * This method is called from within the constructor to initialize the form.

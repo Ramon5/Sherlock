@@ -30,7 +30,29 @@ public class AuthDAO {
             stmt = con.prepareStatement(sql);
             stmt.setString(1, auth.getChave());
             stmt.execute();
+            Autenticacao aut = recuperar();
+            
+            return aut;
+
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        
+    }
+
+    private Autenticacao recuperar() {
+        try {
+            String sql = "select * from Autorizacao";
             Autenticacao aut = new Autenticacao();
+            stmt = con.prepareStatement(sql);
             result = stmt.executeQuery();
             while (result.next()) {
                 if (result.isLast()) {
@@ -39,7 +61,6 @@ public class AuthDAO {
                 }
             }
             return aut;
-
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         } finally {
@@ -58,7 +79,7 @@ public class AuthDAO {
 
     public void excluir(Autenticacao auth) {
         try {
-            String sql = "delete from autorizacao where idAuth = ?";
+            String sql = "delete from Autorizacao where idAuth = ?";
             stmt = con.prepareStatement(sql);
             stmt.setLong(1, auth.getIdAuth());
             stmt.execute();
@@ -75,14 +96,14 @@ public class AuthDAO {
             }
         }
     }
-    
-    public List<Autenticacao> listar(){
+
+    public List<Autenticacao> listar() {
         List<Autenticacao> lista = new ArrayList<>();
-        try {            
+        try {
             String sql = "select * from Autorizacao";
             stmt = con.prepareStatement(sql);
             result = stmt.executeQuery();
-            while(result.next()){
+            while (result.next()) {
                 Autenticacao a = new Autenticacao();
                 a.setIdAuth(result.getLong("idAuth"));
                 a.setChave(result.getString("chave"));
@@ -90,21 +111,21 @@ public class AuthDAO {
             }
         } catch (SQLException ex) {
             Logger.getLogger(AuthDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            try{
-                if(stmt != null){
+        } finally {
+            try {
+                if (stmt != null) {
                     stmt.close();
                 }
-                if(result != null){
+                if (result != null) {
                     result.close();
                 }
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }
         return lista;
     }
-    
+
     public void closeConnection() {
         try {
             con.close();

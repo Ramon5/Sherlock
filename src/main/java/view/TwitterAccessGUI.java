@@ -25,6 +25,10 @@
 package view;
 
 import control.AuthController;
+import dao.AuthDAO;
+import dao.ChaveDAO;
+import entidade.Autenticacao;
+import entidade.Chave;
 import java.awt.Component;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -63,6 +67,8 @@ public class TwitterAccessGUI extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         campoConsumerKey = new javax.swing.JTextField();
         campoConsumerSec = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        cpIdentificador = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -102,6 +108,8 @@ public class TwitterAccessGUI extends javax.swing.JDialog {
 
         jLabel3.setText("Consumer Secret:");
 
+        jLabel4.setText("Identificador:");
+
         javax.swing.GroupLayout painelCaixasLayout = new javax.swing.GroupLayout(painelCaixas);
         painelCaixas.setLayout(painelCaixasLayout);
         painelCaixasLayout.setHorizontalGroup(
@@ -110,27 +118,35 @@ public class TwitterAccessGUI extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(painelCaixasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painelCaixasLayout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(39, 39, 39)
-                        .addComponent(campoConsumerKey, javax.swing.GroupLayout.PREFERRED_SIZE, 467, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(painelCaixasLayout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(campoConsumerSec, javax.swing.GroupLayout.PREFERRED_SIZE, 467, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(campoConsumerSec, javax.swing.GroupLayout.PREFERRED_SIZE, 467, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(painelCaixasLayout.createSequentialGroup()
+                        .addGroup(painelCaixasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(39, 39, 39)
+                        .addGroup(painelCaixasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(campoConsumerKey, javax.swing.GroupLayout.PREFERRED_SIZE, 467, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cpIdentificador, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(45, Short.MAX_VALUE))
         );
         painelCaixasLayout.setVerticalGroup(
             painelCaixasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(painelCaixasLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap(34, Short.MAX_VALUE)
+                .addGroup(painelCaixasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(cpIdentificador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(painelCaixasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(campoConsumerKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
+                .addGap(18, 18, 18)
                 .addGroup(painelCaixasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(campoConsumerSec, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addGap(27, 27, 27))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -152,7 +168,7 @@ public class TwitterAccessGUI extends javax.swing.JDialog {
                 .addComponent(painelTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(painelCaixas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -162,9 +178,23 @@ public class TwitterAccessGUI extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (!campoConsumerKey.getText().isEmpty() && !campoConsumerSec.getText().isEmpty()) {
-            AuthController.autenticacaoTwitter(campoConsumerKey.getText(), campoConsumerSec.getText());
-            dispose();
-        }else{
+            Autenticacao auth = new Autenticacao();
+            if (!cpIdentificador.getText().isEmpty()) {
+                auth.setChave(cpIdentificador.getText());
+                AuthDAO aDAO = new AuthDAO();
+                auth = aDAO.salvar(auth);
+                aDAO.closeConnection();
+                Chave chave = new Chave();
+                chave.setConsumerKey(campoConsumerKey.getText());
+                chave.setConsumerSecret(campoConsumerSec.getText());
+                chave.setAutenticacao(auth);
+                ChaveDAO cDAO = new ChaveDAO();
+                cDAO.salvar(chave);
+                cDAO.closeConnection();
+                limpar();
+                JOptionPane.showMessageDialog(null, "Chave armazenada com sucesso!");                
+            }
+        } else {
             JOptionPane.showMessageDialog(null, "Preencha todos os campos!", "Alerta", JOptionPane.WARNING_MESSAGE);
         }
 
@@ -228,11 +258,13 @@ public class TwitterAccessGUI extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JTextField campoConsumerKey;
     public static javax.swing.JTextField campoConsumerSec;
+    private javax.swing.JTextField cpIdentificador;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel painelCaixas;
     private javax.swing.JPanel painelTitulo;

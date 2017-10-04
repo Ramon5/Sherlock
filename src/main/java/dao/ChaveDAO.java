@@ -28,11 +28,11 @@ public class ChaveDAO {
 
     public void salvar(Chave chave) {
         try {
-            String sql = "insert into Chave(Autorizacao_idAuth,consumer_key,consumer_secret) values(?,?,?)";
+            String sql = "insert into Chave(autorizacao_idAuth,consumer_key,consumer_secret) values(?,?,?)";
             stmt = con.prepareStatement(sql);
             stmt.setLong(1, chave.getAutenticacao().getIdAuth());
-            stmt.setBytes(2, new GeradorCredencial().criptografar(chave.getConsumerKey()));
-            stmt.setBytes(3, new GeradorCredencial().criptografar(chave.getConsumerSecret()));
+            stmt.setString(2, chave.getConsumerKey());
+            stmt.setString(3, chave.getConsumerSecret());
             stmt.execute();
 
         } catch (SQLException ex) {
@@ -58,8 +58,8 @@ public class ChaveDAO {
             while (result.next()) {
                 Chave chave = new Chave();
                 chave.setIdChave(result.getLong("idChave"));
-                chave.setConsumerKey(new GeradorCredencial().decriptar(result.getBytes("consumer_key"), GeradorCredencial.getKey()));
-                chave.setConsumerSecret(new GeradorCredencial().decriptar(result.getBytes("consumer_secret"), GeradorCredencial.getKey()));
+                chave.setConsumerKey(result.getString("consumer_key"));
+                chave.setConsumerSecret(result.getString("consumer_secret"));
                 lista.add(chave);
             }
 

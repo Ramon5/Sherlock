@@ -31,6 +31,7 @@
 package util;
 
 import com.google.maps.GeoApiContext;
+import entidade.Chave;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -66,16 +67,13 @@ public class AutenticacaoAPI {
         logger = Logger.getLogger(AutenticacaoAPI.class);
     }
 
-    public static void appAutentication() {
-        String[] key = descriptografar();
-
-        if (key != null) {
-
+    public static void appAutentication(Chave chave) {
+        if (chave.getConsumerKey() != null && chave.getConsumerSecret() != null) {
             try {
                 ConfigurationBuilder builder = new ConfigurationBuilder();
                 builder.setApplicationOnlyAuthEnabled(true);
-                builder.setOAuthConsumerKey(key[0]);
-                builder.setOAuthConsumerSecret(key[1]);
+                builder.setOAuthConsumerKey(chave.getConsumerKey());
+                builder.setOAuthConsumerSecret(chave.getConsumerSecret());
 
                 OAuth2Token token = new TwitterFactory(builder.build()).getInstance().getOAuth2Token();
 
@@ -83,8 +81,8 @@ public class AutenticacaoAPI {
                 config.setDebugEnabled(true);
                 config.setPrettyDebugEnabled(true);
                 config.setApplicationOnlyAuthEnabled(true);
-                config.setOAuthConsumerKey(key[0]);
-                config.setOAuthConsumerSecret(key[1]);
+                config.setOAuthConsumerKey(chave.getConsumerKey());
+                config.setOAuthConsumerSecret(chave.getConsumerSecret());
                 config.setOAuth2TokenType(token.getTokenType());
                 config.setOAuth2AccessToken(token.getAccessToken());
 
@@ -97,7 +95,7 @@ public class AutenticacaoAPI {
             }
         } else {
             autenticado = false;
-            JOptionPane.showMessageDialog(null, "Você não possui credenciais para o Twitter!");
+            JOptionPane.showMessageDialog(null, "Você não está autenticado!");
         }
 
     }
@@ -163,11 +161,11 @@ public class AutenticacaoAPI {
             int tamanho = (int) key.length();
             byte[] bytes = new byte[tamanho];
             reader.read(bytes, 0, tamanho);
-            
+
             String chave = crypt.decriptar(bytes, CriptografiaDeChaves.getKey());
-            
+
             return chave;
-            
+
         } catch (FileNotFoundException ex) {
             java.util.logging.Logger.getLogger(AutenticacaoAPI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
