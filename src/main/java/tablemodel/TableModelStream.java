@@ -67,10 +67,10 @@ public class TableModelStream extends AbstractTableModel {
     public void setValueAt(TweetStream aValue, int rowIndex) {
         TwitterStreamCollect tw = lista.get(rowIndex);
 
-        tw.getContainerTweet().setArquivo(aValue.getArquivo());
-        tw.getContainerTweet().setQuantidade(aValue.getQuantidade());
-        tw.getContainerTweet().setDataInicio(aValue.getDataInicio());
-        tw.getContainerTweet().setDataFim(aValue.getDataFim());
+        tw.getArquivoTweet().setTermo(aValue.getTermo());
+        tw.getArquivoTweet().setQuantidade(aValue.getQuantidade());
+        tw.getArquivoTweet().setDataInicio(aValue.getDataInicio());
+        tw.getArquivoTweet().setDataFim(aValue.getDataFim());
         
 
         fireTableCellUpdated(rowIndex, 0);
@@ -86,13 +86,13 @@ public class TableModelStream extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0:
-                tw.getContainerTweet().setArquivo(aValue.toString());
+                tw.getArquivoTweet().setTermo(aValue.toString());
             case 1:
-                tw.getContainerTweet().setQuantidade(Long.parseLong(aValue.toString()));
+                tw.getArquivoTweet().setQuantidade(Long.parseLong(aValue.toString()));
             case 2:
-                tw.getContainerTweet().setDataInicio(aValue.toString());
+                tw.getArquivoTweet().setDataInicio(aValue.toString());
             case 3:
-                tw.getContainerTweet().setDataInicio(aValue.toString());            
+                tw.getArquivoTweet().setDataInicio(aValue.toString());            
             default:
                 System.err.println("Índice da coluna inválido");
         }
@@ -103,13 +103,13 @@ public class TableModelStream extends AbstractTableModel {
     public Object getValueAt(int linha, int coluna) {
         switch (coluna) {
             case 0:
-                return lista.get(linha).getContainerTweet().getArquivo();
+                return lista.get(linha).getArquivoTweet().getTermo();
             case 1:
-                return lista.get(linha).getContainerTweet().getQuantidade();
+                return lista.get(linha).getArquivoTweet().getQuantidade();
             case 2:
-                return lista.get(linha).getContainerTweet().getDataInicio();
+                return lista.get(linha).getArquivoTweet().getDataInicio();
             case 3:
-                return lista.get(linha).getContainerTweet().getDataFim();
+                return lista.get(linha).getArquivoTweet().getDataFim();
             
         }
         return null;

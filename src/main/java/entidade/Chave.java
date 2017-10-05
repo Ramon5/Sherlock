@@ -11,6 +11,8 @@ public class Chave {
     private Long idChave;
     private String consumerKey;
     private String consumerSecret;
+    private String accessToken;
+    private String accessSecret;
     private Autenticacao autenticacao;
 
     public Long getIdChave() {
@@ -43,6 +45,22 @@ public class Chave {
 
     public void setAutenticacao(Autenticacao autenticacao) {
         this.autenticacao = autenticacao;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getAccessSecret() {
+        return accessSecret;
+    }
+
+    public void setAccessSecret(String accessSecret) {
+        this.accessSecret = accessSecret;
     }
     
     

@@ -36,16 +36,19 @@ import java.util.ArrayList;
 import java.util.List;
 import util.Mensagem;
 import engines.TwitterStreamCollect;
+import entidade.Chave;
 import entidade.Coleta;
-import inativos.GerenciadorDiretorios;
+import entidade.TweetStream;
+import java.util.Calendar;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import tablemodel.TableModelSearch;
 import tablemodel.TableModelStream;
-import static util.ManipuladorTabela.MANIPULADORTR;
 import view.SherlockGUI;
 import static view.SherlockGUI.btnColetaReal;
 import static view.SherlockGUI.btnStop;
 import static view.SherlockGUI.lbStatusReal;
 import static view.SherlockGUI.tableTR;
-import static view.SherlockGUI.tableView;
 
 /**
  *
@@ -53,42 +56,56 @@ import static view.SherlockGUI.tableView;
  */
 public class TwitterStreamController {
 
-    private TwitterStreamCollect coleta;
+    
+    private TwitterStreamCollect arquivoStream;
     private static List<TwitterStreamCollect> ativos;
-    private TableModelStream model;
+    private JScrollPane scroll;
+    private JTable tableView;
+
+    public TwitterStreamController(JScrollPane scroll, JTable tableView) {
+        this.scroll = scroll;
+        this.tableView = tableView;
+        
+    }
+    
+    
 
     public static void instanciarAtivos() {
         ativos = new ArrayList<>();
     }
 
-    public static void criarArquivoStream(String termo) {
-        GerenciadorDiretorios diretorio = new GerenciadorDiretorios(termo, true);
-        diretorio.criaArquivoColeta();
+    public void criarArquivoStream(String termo, Chave chave, Coleta coleta) {
+        ColetaDAO cDAO = new ColetaDAO();
+        coleta = cDAO.salvar(coleta);
+        cDAO.closeConnection();
+        TweetStream tweet = new TweetStream();
+        tweet.setTermo(termo);  
+        
         TwitterStreamCollect stream = new TwitterStreamCollect(termo);
-        stream.setContainer(diretorio.getContainer());
-        stream.setScroll(SherlockGUI.scrollPainel, SherlockGUI.tableView);
+        stream.setContainer(tweet);
+        stream.setScroll(scroll, tableView);
         stream.setStatus(SherlockGUI.lbStatusReal);
-        MANIPULADORTR.addTweet(stream);
-        SherlockGUI.campoContainer.setText(null);
+        stream.setChave(chave);
+        stream.setColeta(coleta);
+        TableModelSearch tabelaTweets = new TableModelSearch();
+        stream.setTabelaTweets(tabelaTweets);
+        
+        SherlockGUI.modelStream.addTweet(stream);
         SherlockGUI.btnStop.setEnabled(true);
         btnColetaReal.setEnabled(false);
         verificarArquivo(stream);
     }
 
-    public void coletarStreams(Coleta col) {
-        if (coleta != null && !coleta.getContainerTweet().isAtivo()) {
-            ColetaDAO cDAO = new ColetaDAO();
-            col = cDAO.salvar(col);
-            cDAO.closeConnection();
-            coleta.setColeta(col);
-            coleta.collectRealTime();
-            verificarArquivo(coleta);
+    public void coletarStreams() {
+        if (arquivoStream != null && !arquivoStream.getArquivoTweet().isAtivo()) {          
+            arquivoStream.start();
+            verificarArquivo(arquivoStream);
         }
     }
 
-    private static void verificarArquivo(TwitterStreamCollect coleta) {
+    private void verificarArquivo(TwitterStreamCollect coleta) {
         if (coleta != null) {
-            if (coleta.getContainerTweet().isAtivo()) {
+            if (coleta.getArquivoTweet().isAtivo()) {
                 btnStop.setEnabled(true);
                 btnColetaReal.setEnabled(false);
             } else {
@@ -100,21 +117,24 @@ public class TwitterStreamController {
 
     public void cliqueTBStream(MouseEvent event) {
         if (event.getClickCount() == 1) {
-            coleta = (TwitterStreamCollect) MANIPULADORTR.getSelecionado(tableTR.getSelectedRow());
-            tableView.setModel(coleta.getTabelaTweets());
-            verificarArquivo(coleta);
+            arquivoStream = (TwitterStreamCollect) SherlockGUI.modelStream.getSelecionado(tableTR.getSelectedRow());
+            tableView.setModel(arquivoStream.getTabelaTweets());
+            verificarArquivo(arquivoStream);
 
         }
     }
 
-    private static void verificarAtivos() {
+    /**
+     * Quando o usuário pedir para encerrar uma captura stream
+     */
+    private void verificarAtivos() {
         for (int i = 0; i < tableTR.getRowCount(); i++) {
-            TwitterStreamCollect obj = (TwitterStreamCollect) MANIPULADORTR.getSelecionado(i);
+            TwitterStreamCollect obj = (TwitterStreamCollect) SherlockGUI.modelStream.getSelecionado(i);
             ativos.add(obj);
         }
         int contador = 0;
         for (TwitterStreamCollect t : ativos) {
-            if (!t.getContainerTweet().isAtivo()) {
+            if (!t.getArquivoTweet().isAtivo()) {
                 contador++;
             }
         }
@@ -141,10 +161,10 @@ public class TwitterStreamController {
     }
 
     public void pararColeta() {
-        if (coleta != null) {
-            coleta.finalizar();
+        if (arquivoStream != null) {
+            arquivoStream.finalizar();
             verificarAtivos();
-            verificarArquivo(coleta);
+            verificarArquivo(arquivoStream);
         }
     }
 

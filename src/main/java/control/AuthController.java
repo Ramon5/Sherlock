@@ -30,6 +30,10 @@
  */
 package control;
 
+import dao.AuthDAO;
+import dao.ChaveDAO;
+import entidade.Autenticacao;
+import entidade.Chave;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
@@ -43,8 +47,6 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 import static util.DetectaSistema.detectarSistema;
 import util.GeradorCredencial;
-import static view.TwitterAccessGUI.campoConsumerKey;
-import static view.TwitterAccessGUI.campoConsumerSec;
 
 /**
  *
@@ -54,8 +56,8 @@ public class AuthController {
 
     private static GeradorCredencial auth;
     private static Logger logger;
-    //private static RequestToken requestToken;
-    //private static AccessToken accessToken;
+    private static RequestToken requestToken;
+    private static AccessToken accessToken;
 
     public static void authGoogle(String chave) {
         auth = new GeradorCredencial();
@@ -65,9 +67,8 @@ public class AuthController {
 
     }
 
-    public static void autenticacaoTwitter(String consumer, String consumerSecret) {
-        gerarCredenciais(consumer,consumerSecret);
-        /*try {
+    public static void autenticacaoTwitter(Autenticacao auth,String consumer, String consumerSecret) {
+        try {
             Twitter twitter = TwitterFactory.getSingleton();
             twitter.setOAuthConsumer(consumer, consumerSecret);
             requestToken = twitter.getOAuthRequestToken();
@@ -91,27 +92,33 @@ public class AuthController {
                         }
                     }
                 }
-                gerarCredenciais();                
+                gerarCredenciais(auth,consumer, consumerSecret);                
             }
 
         } catch (TwitterException ex) {
             logger.error(ex);
-        }*/
+        }
 
     }
 
-    private static void gerarCredenciais(String consumer, String consumerSecret) {
-        auth = new GeradorCredencial();
-        auth.criarDiretorio();
-        //if (accessToken != null) {
-            auth.gerarArquivoCrypto(getKeyForCrypt(consumer, consumerSecret), System.getProperty("user.home") + "/SherlockTM/Config_Auth/config.cfg");
+    private static void gerarCredenciais(Autenticacao auth, String consumer, String consumerSecret) {        
+        if (accessToken != null) {                
+                Chave chave = new Chave();
+                chave.setConsumerKey(consumer);
+                chave.setConsumerSecret(consumerSecret);
+                chave.setAccessToken(accessToken.getToken());
+                chave.setAccessSecret(accessToken.getTokenSecret());
+                chave.setAutenticacao(auth);
+                ChaveDAO cDAO = new ChaveDAO();
+                cDAO.salvar(chave);
+                cDAO.closeConnection();
             JOptionPane.showMessageDialog(null, "Arquivo de autenticacao gerado com sucesso!");
-        //}else{
-        //    JOptionPane.showMessageDialog(null, "Não foi possível gerar o arquivo de autenticação!", "Erro", JOptionPane.ERROR_MESSAGE);
-        //}
+        }else{
+          JOptionPane.showMessageDialog(null, "Não foi possível gerar o arquivo de autenticação!", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    /*private static void irParaSite(String link) {
+    private static void irParaSite(String link) {
         try {
             if (detectarSistema() == 0) {
                 String[] args = new String[]{"/usr/bin/firefox", link};
@@ -124,9 +131,9 @@ public class AuthController {
         } catch (URISyntaxException ex) {
             logger.error(ex);
         }
-    }*/
+    }
 
-    private static String getKeyForCrypt(String consumer, String consumerSecret) {
+    /*private static String getKeyForCrypt(String consumer, String consumerSecret) {
         StringBuilder str = new StringBuilder();
         if (consumer != null && consumerSecret != null) {
             str.append(campoConsumerKey.getText()).append("|");
@@ -136,6 +143,6 @@ public class AuthController {
             return str.toString();
         } 
         return null;
-    }
+    }*/
 
 }

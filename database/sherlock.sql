@@ -24,7 +24,9 @@ CREATE TABLE Tweet (
   created_at TIMESTAMP  NOT NULL  ,
   retweet INTEGER    ,
   latitude DOUBLE    ,
-  longitude DOUBLE      ,
+  longitude DOUBLE    ,
+  lang CHAR(2)      ,
+   api VARCHAR(15) ,
 PRIMARY KEY(idTweet, Coleta_idColeta)  ,
   FOREIGN KEY(Coleta_idColeta)
     REFERENCES Coleta(idColeta)
@@ -40,7 +42,9 @@ CREATE TABLE Chave (
   idChave BIGINT  NOT NULL  ,
   Autorizacao_idAuth BIGINT  NOT NULL  ,
   consumer_key VARCHAR(255)  NOT NULL  ,
-  consumer_secret VARCHAR(255)  NOT NULL    ,
+  consumer_secret VARCHAR(255)  NOT NULL  ,
+  accessToken VARCHAR(255)  NOT NULL  ,
+  accessSecret VARCHAR(255)  NOT NULL    ,
 PRIMARY KEY(idChave, Autorizacao_idAuth)  ,
   FOREIGN KEY(Autorizacao_idAuth)
     REFERENCES Autorizacao(idAuth)

@@ -177,23 +177,13 @@ public class TwitterAccessGUI extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (!campoConsumerKey.getText().isEmpty() && !campoConsumerSec.getText().isEmpty()) {
+        if (!campoConsumerKey.getText().isEmpty() && !campoConsumerSec.getText().isEmpty() && !cpIdentificador.getText().isEmpty()) {
             Autenticacao auth = new Autenticacao();
-            if (!cpIdentificador.getText().isEmpty()) {
-                auth.setChave(cpIdentificador.getText());
-                AuthDAO aDAO = new AuthDAO();
-                auth = aDAO.salvar(auth);
-                aDAO.closeConnection();
-                Chave chave = new Chave();
-                chave.setConsumerKey(campoConsumerKey.getText());
-                chave.setConsumerSecret(campoConsumerSec.getText());
-                chave.setAutenticacao(auth);
-                ChaveDAO cDAO = new ChaveDAO();
-                cDAO.salvar(chave);
-                cDAO.closeConnection();
-                limpar();
-                JOptionPane.showMessageDialog(null, "Chave armazenada com sucesso!");                
-            }
+            auth.setChave(cpIdentificador.getText());
+            AuthDAO aDAO = new AuthDAO();
+            auth = aDAO.salvar(auth);
+            aDAO.closeConnection();
+            AuthController.autenticacaoTwitter(auth, campoConsumerKey.getText(), campoConsumerSec.getText());
         } else {
             JOptionPane.showMessageDialog(null, "Preencha todos os campos!", "Alerta", JOptionPane.WARNING_MESSAGE);
         }
@@ -256,8 +246,8 @@ public class TwitterAccessGUI extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public static javax.swing.JTextField campoConsumerKey;
-    public static javax.swing.JTextField campoConsumerSec;
+    private javax.swing.JTextField campoConsumerKey;
+    private javax.swing.JTextField campoConsumerSec;
     private javax.swing.JTextField cpIdentificador;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

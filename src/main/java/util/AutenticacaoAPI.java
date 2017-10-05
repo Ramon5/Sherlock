@@ -60,7 +60,7 @@ public class AutenticacaoAPI {
     public static boolean autenticadoMaps;
     public static GeoApiContext context;
     public static String chaveAPI;
-    public static OAuthAuthorization oauth;
+    public static OAuth2Authorization oauth;
     public static String keyMap;
     public static int indiceChave;
 
@@ -85,8 +85,8 @@ public class AutenticacaoAPI {
                 config.setOAuthConsumerKey(chave.getConsumerKey());
                 config.setOAuthConsumerSecret(chave.getConsumerSecret());
                 config.setOAuth2TokenType(token.getTokenType());
-                config.setOAuth2AccessToken(token.getAccessToken());
-
+                config.setOAuth2AccessToken(token.getAccessToken());                  
+                
                 twitter = new TwitterFactory(config.build()).getInstance();
 
                 autenticado = true;

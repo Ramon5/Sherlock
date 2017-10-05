@@ -28,11 +28,13 @@ public class ChaveDAO {
 
     public void salvar(Chave chave) {
         try {
-            String sql = "insert into Chave(autorizacao_idAuth,consumer_key,consumer_secret) values(?,?,?)";
+            String sql = "insert into Chave(autorizacao_idAuth,consumer_key,consumer_secret,accessToken,accessSecret) values(?,?,?,?,?)";
             stmt = con.prepareStatement(sql);
             stmt.setLong(1, chave.getAutenticacao().getIdAuth());
             stmt.setString(2, chave.getConsumerKey());
             stmt.setString(3, chave.getConsumerSecret());
+            stmt.setString(4, chave.getAccessToken());
+            stmt.setString(5, chave.getAccessSecret());
             stmt.execute();
 
         } catch (SQLException ex) {
@@ -60,6 +62,8 @@ public class ChaveDAO {
                 chave.setIdChave(result.getLong("idChave"));
                 chave.setConsumerKey(result.getString("consumer_key"));
                 chave.setConsumerSecret(result.getString("consumer_secret"));
+                chave.setAccessToken(result.getString("accessToken"));
+                chave.setAccessSecret(result.getString("accessSecret"));
                 lista.add(chave);
             }
 

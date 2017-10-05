@@ -39,6 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import tablemodel.TableModelSearch;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.RateLimitStatusEvent;
@@ -46,9 +47,8 @@ import twitter4j.RateLimitStatusListener;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import util.AutenticacaoAPI;
-import util.ManipuladorTabela;
 
-public final class TwitterSearch extends Thread implements ManipuladorTabela {
+public final class TwitterSearch extends Thread {
 
     private String termo;
     private JLabel status;
@@ -72,6 +72,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
     private boolean retweet;
     private Coleta coleta;
     private TweetDAO tDAO;
+    private TableModelSearch model;
 
     /**
      * Construtor
@@ -79,9 +80,10 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
      * @param botao
      * @param botaoLimpar
      */
-    public TwitterSearch(JButton botao, JButton botaoLimpar) {
+    public TwitterSearch(JButton botao, JButton botaoLimpar, TableModelSearch model) {
         this.botao = botao;
         this.botaoLimpar = botaoLimpar;
+        this.model = model;
         InputStream in = this.getClass().getResourceAsStream("/log4j/log4j.properties");
         PropertyConfigurator.configure(in);
         this.logger = Logger.getLogger(TwitterSearch.class);
@@ -201,7 +203,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
                 finalizado = listTweets.size();
 
                 for (Status tweet : listTweets) {
-                    MANIPULADOR.addTweet(getTweet(tweet));
+                    model.addTweet(getTweet(tweet));
                     scroll.getVerticalScrollBar().setValue(table.getHeight());
                     quantidade.setText(String.valueOf(count));
                     max_id = Math.min(tweet.getId(), max_id);
@@ -262,6 +264,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
         tw.setTo_user_id(status.getInReplyToUserId());
         tw.setFavorite_count(status.getFavoriteCount());
         tw.setLang(status.getLang());
+        tw.setApi("search");
         if (status.isRetweet()) {
             tw.setRetweet(1);
         } else {

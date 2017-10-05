@@ -30,6 +30,7 @@
  */
 package entidade;
 
+import engines.TwitterStreamCollect;
 import java.io.File;
 import java.util.Date;
 import tablemodel.TableModelStream;
@@ -38,27 +39,22 @@ import tablemodel.TableModelStream;
  *
  * @author root
  */
-public class TweetStream extends File{
+public class TweetStream {
     
-    private String arquivo;
+    private String termo;
     private Long quantidade;
     private String dataInicio;
     private String dataFim;
     private boolean ativo = false;
     private TableModelStream model;
-    
 
-    public TweetStream(String string) {
-        super(string);
+    public String getTermo() {
+        return termo;
     }
 
-    public String getArquivo() {
-        return arquivo;
-    }
-
-    public void setArquivo(String arquivo) {
-        this.arquivo = arquivo;
-    }
+    public void setTermo(String termo) {
+        this.termo = termo;
+    }    
 
     public Long getQuantidade() {
         return quantidade;
@@ -100,7 +96,8 @@ public class TweetStream extends File{
         this.model = model;
     }
 
-       
+
+    
     
     
 }

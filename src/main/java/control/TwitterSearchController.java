@@ -40,25 +40,39 @@ import java.util.Date;
 import javax.swing.JOptionPane;
 import engines.TwitterSearch;
 import entidade.Coleta;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import tablemodel.TableModelSearch;
 import util.AutenticacaoAPI;
 import util.DetectaSistema;
 import static util.DetectaSistema.detectarSistema;
-import util.ManipuladorTabela;
 import view.SherlockGUI;
 
 /**
  *
  * @author root
  */
-public class TwitterSearchController implements ManipuladorTabela, DetectaSistema {
+public class TwitterSearchController implements DetectaSistema {
 
-    public static void buscaRetroativa(String termo, int dia, boolean retroativo, boolean retweet) {
+    private JScrollPane scroll;
+    private JTable table;
+    private TableModelSearch model;
+
+    public TwitterSearchController(JScrollPane scroll, JTable table, TableModelSearch model) {
+        this.scroll = scroll;
+        this.table = table;
+        this.model = model;
+    }
+    
+    
+    
+    public void buscaRetroativa(String termo, int dia, boolean retroativo, boolean retweet) {
         if (AutenticacaoAPI.autenticado) {
-            TwitterSearch twitter = new TwitterSearch(SherlockGUI.btnBuscar, SherlockGUI.btnLimpar);
+            TwitterSearch twitter = new TwitterSearch(SherlockGUI.btnBuscar, SherlockGUI.btnLimpar, model);
             twitter.setTermo(termo);
             twitter.setLabels(SherlockGUI.lbStatus, SherlockGUI.lbQuantidade, SherlockGUI.lbData);
             //twitter.setCloud(DropBoxController.getDropBox());
-            twitter.setScroll(SherlockGUI.scroll, SherlockGUI.table);
+            twitter.setScroll(scroll, table);
             twitter.setRetweet(retweet);
 
             Coleta coleta = new Coleta();
@@ -107,13 +121,13 @@ public class TwitterSearchController implements ManipuladorTabela, DetectaSistem
      *
      * @return
      */
-    private static Date getDataLimite(int dia) {
+    private Date getDataLimite(int dia) {
         Calendar dataLimite = Calendar.getInstance();
         dataLimite.add(Calendar.DAY_OF_MONTH, -(dia));
         return dataLimite.getTime();
     }
 
-    private static Date getDataAtual() {
+    private Date getDataAtual() {
         Calendar hoje = Calendar.getInstance();
         return hoje.getTime();
     }

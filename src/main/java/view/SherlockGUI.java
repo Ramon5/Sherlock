@@ -37,34 +37,42 @@ import entidade.Coleta;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import tablemodel.TableModelSearch;
 import tablemodel.TableModelStream;
 import util.AutenticacaoAPI;
 import util.DetectaSistema;
-import util.ManipuladorTabela;
 
 /**
  *
  * @author root
  */
-public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela, DetectaSistema {
+public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
 
-    private final TwitterStreamController controlStream;
+    private TwitterStreamController controlStream;
+    private TwitterSearchController searchControl;
     public static List<Chave> keys;
     private ChaveDAO cDAO;
     private AuthDAO aDAO;
+    private TableModelSearch modelSearch;
+    public static TableModelStream modelStream;
+    private TableModelSearch modelView;
 
     /**
      * Creates new form SherlockGUI
      */
     public SherlockGUI() {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        modelSearch = new TableModelSearch();
+        modelStream = new TableModelStream();
+        modelView = new TableModelSearch();
         initComponents();
         keys = new ArrayList<>();
         cDAO = new ChaveDAO();
         aDAO = new AuthDAO();
         obterChaves();
         TwitterStreamController.instanciarAtivos();
-        controlStream = new TwitterStreamController();
+        controlStream = new TwitterStreamController(scrollPainel, tableView);
+
     }
 
     private void obterChaves() {
@@ -78,7 +86,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
             }
             AutenticacaoAPI.indiceChave = 0;
             AutenticacaoAPI.appAutentication(keys.get(0));
-        }else{
+        } else {
             JOptionPane.showMessageDialog(this, "Você não possui credenciais!");
         }
         cDAO.closeConnection();
@@ -112,6 +120,8 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        scroll = new javax.swing.JScrollPane();
+        table = new javax.swing.JTable();
         jPanel7 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -240,7 +250,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         lbData.setText("...");
         painelColeta.add(lbData);
 
-        table.setModel(MANIPULADOR);
+        table.setModel(modelSearch);
         scroll.setViewportView(table);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -310,7 +320,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
             }
         });
 
-        tableTR.setModel(MANIPULADORTR);
+        tableTR.setModel(modelStream);
         tableTR.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tableTRMouseClicked(evt);
@@ -387,7 +397,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tableView.setModel(MANIPULADOR);
+        tableView.setModel(modelView);
         scrollPainel.setViewportView(tableView);
 
         lbTwitter1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Twitter-icon.png"))); // NOI18N
@@ -565,10 +575,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
     }//GEN-LAST:event_btnStopActionPerformed
 
     private void btnColetaRealActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnColetaRealActionPerformed
-        Coleta coleta = new Coleta();
-        coleta.setTermo(campoBusca.getText());
-        coleta.setData(Calendar.getInstance().getTime());
-        controlStream.coletarStreams(coleta);
+        controlStream.coletarStreams();
     }//GEN-LAST:event_btnColetaRealActionPerformed
 
     private void tableTRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableTRMouseClicked
@@ -579,7 +586,11 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         if (campoContainer.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Informe um termo de busca!");
         } else {
-            TwitterStreamController.criarArquivoStream(campoContainer.getText());
+            Coleta coleta = new Coleta();
+            coleta.setTermo(campoContainer.getText());
+            coleta.setData(Calendar.getInstance().getTime());
+            controlStream.criarArquivoStream(campoContainer.getText(), keys.get(0), coleta);
+            campoContainer.setText(null);
         }
     }//GEN-LAST:event_btnCriaArquivoActionPerformed
 
@@ -597,12 +608,13 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         redefinirLabels();
+        searchControl = new TwitterSearchController(scroll, table, modelSearch);
         if (campoBusca.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Digite algum termo de busca!", "Aviso",
                     JOptionPane.INFORMATION_MESSAGE);
         } else {
             int dia = Integer.parseInt(cbDia.getSelectedItem().toString());
-            TwitterSearchController.buscaRetroativa(campoBusca.getText(), dia, chckbxColetaRetroativa.isSelected(), chkRetweet.isSelected());
+            searchControl.buscaRetroativa(campoBusca.getText(), dia, chckbxColetaRetroativa.isSelected(), chkRetweet.isSelected());
         }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
@@ -617,7 +629,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         lbStatus.setText("...");
         lbQuantidade.setText("0");
         campoBusca.setText(null);
-        MANIPULADOR.limparTabela();
+        //MANIPULADOR.limparTabela();
     }
 
     /**
@@ -713,11 +725,11 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
     private javax.swing.JMenuItem menuSobre;
     private javax.swing.JPanel painelCloudReal;
     private javax.swing.JPanel painelColeta;
-    public static final javax.swing.JScrollPane scroll = new javax.swing.JScrollPane();
-    public static javax.swing.JScrollPane scrollPainel;
+    private javax.swing.JScrollPane scroll;
+    private javax.swing.JScrollPane scrollPainel;
     public static javax.swing.JScrollPane scrollTR;
-    public static final javax.swing.JTable table = new javax.swing.JTable();
+    private javax.swing.JTable table;
     public static javax.swing.JTable tableTR;
-    public static javax.swing.JTable tableView;
+    private javax.swing.JTable tableView;
     // End of variables declaration//GEN-END:variables
 }

@@ -135,4 +135,7 @@ public class TableModelSearch extends AbstractTableModel {
         fireTableDataChanged();
     }
     
+    public void atualizar(){
+        fireTableDataChanged();
+    }
 }

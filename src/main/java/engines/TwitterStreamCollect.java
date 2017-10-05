@@ -27,7 +27,12 @@ package engines;
 import entidade.TweetStream;
 import entidade.Tweet;
 import com.dropbox.core.DbxException;
+import control.TwitterStreamController;
+import dao.AuthDAO;
+import dao.ChaveDAO;
 import dao.TweetDAO;
+import entidade.Autenticacao;
+import entidade.Chave;
 import entidade.Coleta;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -57,21 +62,27 @@ import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.auth.OAuth2Token;
+import twitter4j.auth.OAuthAuthorization;
+import twitter4j.conf.ConfigurationBuilder;
 import util.AutenticacaoAPI;
+import static util.AutenticacaoAPI.autenticado;
+import static util.AutenticacaoAPI.twitter;
 import util.DetectaSistema;
-import util.ManipuladorTabela;
 import util.PreprocessoStrings;
+import view.SherlockGUI;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 
-public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
+public class TwitterStreamCollect extends Thread implements DetectaSistema {
 
-    
     private String query;
     private Logger logger;
     private JScrollPane scroll;
@@ -86,44 +97,51 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
     private TableModelSearch tabelaTweets;
     private JLabel labelSt;
 
-    private TweetStream containerTweet;
+    private TweetStream arquivoColeta;
     private GerenciadorLimite limite;
 
     private FilterQuery filter;
 
     private Coleta coleta;
     private TweetDAO tDAO;
+    private Chave chave;
 
     public TwitterStreamCollect(String query) {
         this.query = query;
         InputStream in = this.getClass().getResourceAsStream("/log4j/log4j.properties");
         PropertyConfigurator.configure(in);
         this.logger = Logger.getLogger(TwitterStreamCollect.class);
-        tabelaTweets = new TableModelSearch();
         limite = new GerenciadorLimite(labelSt);
         filename = query;
         tDAO = new TweetDAO();
     }
 
-
     public TableModelSearch getTabelaTweets() {
         return tabelaTweets;
     }
 
-    public TweetStream getContainerTweet() {
-        return containerTweet;
+    public void setTabelaTweets(TableModelSearch tabelaTweets) {
+        this.tabelaTweets = tabelaTweets;
     }
 
-    public void setContainerTweet(TweetStream containerTweet) {
-        this.containerTweet = containerTweet;
+    public TweetStream getArquivoTweet() {
+        return arquivoColeta;
+    }
+
+    public void setArquivoTweet(TweetStream arquivoTweet) {
+        this.arquivoColeta = arquivoTweet;
     }
 
     public void setLinha(int linha) {
         this.linha = linha;
     }
 
+    public void setChave(Chave chave) {
+        this.chave = chave;
+    }
+
     public void setContainer(TweetStream containerTweet) {
-        this.containerTweet = containerTweet;
+        this.arquivoColeta = containerTweet;
     }
 
     public void setStatus(JLabel labelSt) {
@@ -134,23 +152,26 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         this.coleta = coleta;
     }
 
-    public void setModel(TableModelStream model) {
-        this.model = model;
+    @Override
+    public void run() {
+        collectRealTime();
     }
     
     
 
     /**
      * Método responsável por realizar a coleta em tempo real
+     *
+     * @param chave
      */
-    public void collectRealTime() {
-
-        twitterSt = new TwitterStreamFactory().getInstance(AutenticacaoAPI.oauth);
-        containerTweet.setAtivo(true);
-        containerTweet.setDataInicio(getData());
-        model.atualizar();
+    private void collectRealTime() {        
+        
+        twitterSt = new TwitterStreamFactory().getInstance(getAutorization());
+        arquivoColeta.setAtivo(true);
+        arquivoColeta.setDataInicio(getData());
+        tabelaTweets.atualizar();
         labelSt.setText("Coletando...");
-
+        
         twitterSt.addRateLimitStatusListener(new RateLimitStatusListener() {
 
             @Override
@@ -163,12 +184,12 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
                 limite.checarLimite(event);
             }
         });
-
         StatusListener listener = new StatusListener() {
 
             @Override
             public void onException(Exception arg0) {
-                logger.error(arg0);
+                arg0.printStackTrace();
+                //logger.error(arg0);
             }
 
             @Override
@@ -181,8 +202,8 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
             public void onStatus(Status tweet) {
                 coletar(tweet);
                 contador++;
-                containerTweet.setQuantidade(contador);
-                MANIPULADORTR.refreshData(linha);
+                arquivoColeta.setQuantidade(contador);
+                SherlockGUI.modelStream.refreshData(linha);
                 dataFinal = tweet.getCreatedAt();
             }
 
@@ -202,9 +223,21 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
 
             }
         };
-
         configurarStream(listener);
 
+    }
+    
+    private OAuthAuthorization getAutorization(){
+        ConfigurationBuilder config = new ConfigurationBuilder();
+        config.setDebugEnabled(true);
+        config.setPrettyDebugEnabled(true);
+        config.setOAuthConsumerKey(chave.getConsumerKey());
+        config.setOAuthConsumerSecret(chave.getConsumerSecret());
+        config.setOAuthAccessToken(chave.getAccessToken());
+        config.setOAuthAccessTokenSecret(chave.getAccessSecret());
+        OAuthAuthorization auth = new OAuthAuthorization(config.build());
+        
+        return auth;
     }
 
     public void setScroll(JScrollPane scroll, JTable table) {
@@ -214,11 +247,12 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
 
     private void configurarStream(StatusListener listener) {
         if (AutenticacaoAPI.autenticado) {
-            filter = new FilterQuery();
+            filter = new FilterQuery();            
             filter.track(query);
             filter.language("pt");
             twitterSt.addListener(listener);
             twitterSt.filter(filter);
+            
 
         } else {
             JOptionPane.showMessageDialog(null, "Você não possui credenciais para acessar o Twitter!");
@@ -235,7 +269,6 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         tabelaTweets.addTweet(getTweet(tweet));
         scroll.getVerticalScrollBar().setValue(table.getHeight());
     }
-
 
     /**
      * Método responsável por obter as informações dos tweets recuperados em
@@ -259,6 +292,7 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         tw.setTo_user_id(status.getInReplyToUserId());
         tw.setFavorite_count(status.getFavoriteCount());
         tw.setLang(status.getLang());
+        tw.setApi("stream");
         if (status.isRetweet()) {
             tw.setRetweet(1);
         } else {
@@ -288,12 +322,14 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         try {
 
             twitterSt.cleanUp();
-            containerTweet.setAtivo(false);
+            arquivoColeta.setAtivo(false);
 
             if (dataFinal != null) {
-                containerTweet.setDataFim(dataFormato.format(dataFinal));
+                arquivoColeta.setDataFim(dataFormato.format(dataFinal));
             }
 
+            this.interrupt();
+            
         } catch (IllegalStateException ex) {
             logger.error(ex);
             JOptionPane.showMessageDialog(null, "Erro: " + ex.getLocalizedMessage());
@@ -303,7 +339,6 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
 
     }
 
-   
     private String getData() {
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
         Calendar hoje = Calendar.getInstance();
