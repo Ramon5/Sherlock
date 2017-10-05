@@ -26,7 +26,9 @@ package view;
 
 import control.TwitterSearchController;
 import control.TwitterStreamController;
+import dao.AuthDAO;
 import dao.ChaveDAO;
+import entidade.Autenticacao;
 import entidade.Chave;
 import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
@@ -39,18 +41,17 @@ import util.AutenticacaoAPI;
 import util.DetectaSistema;
 import util.ManipuladorTabela;
 
-
 /**
  *
  * @author root
  */
 public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela, DetectaSistema {
-   
-    
+
     private final TwitterStreamController controlStream;
     public static List<Chave> keys;
     private ChaveDAO cDAO;
-    
+    private AuthDAO aDAO;
+
     /**
      * Creates new form SherlockGUI
      */
@@ -59,16 +60,30 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         initComponents();
         keys = new ArrayList<>();
         cDAO = new ChaveDAO();
-        autenticar();
-        TwitterStreamController.instanciarAtivos();  
+        aDAO = new AuthDAO();
+        obterChaves();
+        TwitterStreamController.instanciarAtivos();
         controlStream = new TwitterStreamController();
     }
 
-    private void autenticar(){
-        AutenticacaoAPI.appAutentication(keys.get(0));
-        //AutenticacaoAPI.autenticarMaps();
-        
+    private void obterChaves() {
+        List<Autenticacao> auth = aDAO.listar();
+        if (auth.size() > 0) {
+            for (Autenticacao a : auth) {
+                List<Chave> chaves = cDAO.listar(a);
+                for (Chave c : chaves) {
+                    keys.add(c);
+                }
+            }
+            AutenticacaoAPI.indiceChave = 0;
+            AutenticacaoAPI.appAutentication(keys.get(0));
+        }else{
+            JOptionPane.showMessageDialog(this, "Você não possui credenciais!");
+        }
+        cDAO.closeConnection();
+        aDAO.closeConnection();
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -537,7 +552,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         utilitario.setVisible(true);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
-    
+
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
         ConvertWekaGUI weka = new ConvertWekaGUI(this, rootPaneCheckingEnabled);
         weka.setLocationRelativeTo(this);
@@ -583,7 +598,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         redefinirLabels();
         if (campoBusca.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Digite algum termo de busca!", "Aviso",
-                JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.INFORMATION_MESSAGE);
         } else {
             int dia = Integer.parseInt(cbDia.getSelectedItem().toString());
             TwitterSearchController.buscaRetroativa(campoBusca.getText(), dia, chckbxColetaRetroativa.isSelected(), chkRetweet.isSelected());
@@ -646,7 +661,6 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         lbQuantidade.setText(String.valueOf(0));
         lbData.setText("...");
     }
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

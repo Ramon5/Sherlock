@@ -132,7 +132,7 @@ public class TwitterStreamController {
         Mensagem msg;
         String text = System.getProperty("user.home") + "/SherlockTM/Dataset/";
         msg = new Mensagem(null, true, text);
-        msg.setTitulo("Captura Ao Vivo");
+        msg.setTitulo("Tweet Stream");
         msg.setLocationRelativeTo(null);
         msg.setVisible(true);
 

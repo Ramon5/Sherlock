@@ -62,6 +62,7 @@ public class AutenticacaoAPI {
     public static String chaveAPI;
     public static OAuthAuthorization oauth;
     public static String keyMap;
+    public static int indiceChave;
 
     public AutenticacaoAPI() {
         logger = Logger.getLogger(AutenticacaoAPI.class);

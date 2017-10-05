@@ -30,10 +30,14 @@
  */
 package engines;
 
+import entidade.Chave;
+import java.util.List;
 import javax.swing.JLabel;
 import org.apache.log4j.Logger;
 import twitter4j.QueryResult;
 import twitter4j.RateLimitStatusEvent;
+import util.AutenticacaoAPI;
+import view.SherlockGUI;
 
 /**
  *
@@ -50,17 +54,35 @@ public class GerenciadorLimite {
     }
 
     public void checarLimite(RateLimitStatusEvent limit) {
-        if (limit.isAccountRateLimitStatus() || limit.isIPRateLimitStatus()) {
-            if (limit.getRateLimitStatus().getRemaining() <= 0) {
-                int tempoEspera = limit.getRateLimitStatus().getSecondsUntilReset() + 200;
+        List<Chave> chaves = SherlockGUI.keys;
 
-                for (int i = tempoEspera; i > 0; i--) {
-                    try {
-                        status.setText("\nLimite atingido!! Esperando: " + i + " segundos");
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                        logger.error(ex);
+        if (chaves.size() > 1) {
+            for (int i = 0; i < chaves.size(); i++) {
+                if (i < chaves.size() - 1) {
+                    AutenticacaoAPI.indiceChave = i+1;
+                    AutenticacaoAPI.appAutentication(chaves.get(i + 1));
+                    break;
+                } else {
+                    AutenticacaoAPI.indiceChave = 0;
+                    AutenticacaoAPI.appAutentication(chaves.get(0));
+                    break;
+                }
+
+            }
+
+        } else {
+            if (limit.isAccountRateLimitStatus() || limit.isIPRateLimitStatus()) {
+                if (limit.getRateLimitStatus().getRemaining() <= 0) {
+                    int tempoEspera = limit.getRateLimitStatus().getSecondsUntilReset() + 200;
+
+                    for (int i = tempoEspera; i > 0; i--) {
+                        try {
+                            status.setText("\nLimite atingido!! Esperando: " + i + " segundos");
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                            logger.error(ex);
+                        }
                     }
                 }
             }

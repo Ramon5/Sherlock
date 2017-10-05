@@ -36,8 +36,6 @@ public class Chave {
     public void setConsumerSecret(String consumerSecret) {
         this.consumerSecret = consumerSecret;
     }
-
-    
     
     public Autenticacao getAutenticacao() {
         return autenticacao;
