@@ -49,6 +49,7 @@ import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import tablemodel.TableModelSearch;
+import tablemodel.TableModelStream;
 import twitter4j.FilterQuery;
 import twitter4j.RateLimitStatusEvent;
 import twitter4j.RateLimitStatusListener;
@@ -76,6 +77,7 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
     private JScrollPane scroll;
     private JTable table;
     private TwitterStream twitterSt;
+    private TableModelStream model;
 
     private String filename;
     private long contador = 0;
@@ -132,6 +134,12 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         this.coleta = coleta;
     }
 
+    public void setModel(TableModelStream model) {
+        this.model = model;
+    }
+    
+    
+
     /**
      * Método responsável por realizar a coleta em tempo real
      */
@@ -140,7 +148,7 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
         twitterSt = new TwitterStreamFactory().getInstance(AutenticacaoAPI.oauth);
         containerTweet.setAtivo(true);
         containerTweet.setDataInicio(getData());
-        manipuladorTR.atualizar();
+        model.atualizar();
         labelSt.setText("Coletando...");
 
         twitterSt.addRateLimitStatusListener(new RateLimitStatusListener() {
@@ -174,7 +182,7 @@ public class TwitterStreamCollect implements DetectaSistema, ManipuladorTabela {
                 coletar(tweet);
                 contador++;
                 containerTweet.setQuantidade(contador);
-                manipuladorTR.refreshData(linha);
+                MANIPULADORTR.refreshData(linha);
                 dataFinal = tweet.getCreatedAt();
             }
 

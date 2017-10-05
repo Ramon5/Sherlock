@@ -37,6 +37,7 @@ import entidade.Coleta;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import tablemodel.TableModelStream;
 import util.AutenticacaoAPI;
 import util.DetectaSistema;
 import util.ManipuladorTabela;
@@ -239,7 +240,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         lbData.setText("...");
         painelColeta.add(lbData);
 
-        table.setModel(manipulador);
+        table.setModel(MANIPULADOR);
         scroll.setViewportView(table);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -309,7 +310,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
             }
         });
 
-        tableTR.setModel(manipuladorTR);
+        tableTR.setModel(MANIPULADORTR);
         tableTR.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tableTRMouseClicked(evt);
@@ -386,7 +387,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tableView.setModel(manipulador);
+        tableView.setModel(MANIPULADOR);
         scrollPainel.setViewportView(tableView);
 
         lbTwitter1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Twitter-icon.png"))); // NOI18N
@@ -616,7 +617,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
         lbStatus.setText("...");
         lbQuantidade.setText("0");
         campoBusca.setText(null);
-        manipulador.limparTabela();
+        MANIPULADOR.limparTabela();
     }
 
     /**
@@ -699,7 +700,7 @@ public class SherlockGUI extends javax.swing.JFrame implements ManipuladorTabela
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JLabel lbCloudReal;
+    public static javax.swing.JLabel lbCloudReal;
     public static final javax.swing.JLabel lbData = new javax.swing.JLabel();
     private javax.swing.JLabel lbLogo;
     public static final javax.swing.JLabel lbQuantidade = new javax.swing.JLabel();

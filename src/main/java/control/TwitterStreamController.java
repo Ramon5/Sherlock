@@ -38,7 +38,8 @@ import util.Mensagem;
 import engines.TwitterStreamCollect;
 import entidade.Coleta;
 import inativos.GerenciadorDiretorios;
-import static util.ManipuladorTabela.manipuladorTR;
+import tablemodel.TableModelStream;
+import static util.ManipuladorTabela.MANIPULADORTR;
 import view.SherlockGUI;
 import static view.SherlockGUI.btnColetaReal;
 import static view.SherlockGUI.btnStop;
@@ -54,6 +55,7 @@ public class TwitterStreamController {
 
     private TwitterStreamCollect coleta;
     private static List<TwitterStreamCollect> ativos;
+    private TableModelStream model;
 
     public static void instanciarAtivos() {
         ativos = new ArrayList<>();
@@ -66,7 +68,7 @@ public class TwitterStreamController {
         stream.setContainer(diretorio.getContainer());
         stream.setScroll(SherlockGUI.scrollPainel, SherlockGUI.tableView);
         stream.setStatus(SherlockGUI.lbStatusReal);
-        manipuladorTR.addTweet(stream);
+        MANIPULADORTR.addTweet(stream);
         SherlockGUI.campoContainer.setText(null);
         SherlockGUI.btnStop.setEnabled(true);
         btnColetaReal.setEnabled(false);
@@ -98,7 +100,7 @@ public class TwitterStreamController {
 
     public void cliqueTBStream(MouseEvent event) {
         if (event.getClickCount() == 1) {
-            coleta = (TwitterStreamCollect) manipuladorTR.getSelecionado(tableTR.getSelectedRow());
+            coleta = (TwitterStreamCollect) MANIPULADORTR.getSelecionado(tableTR.getSelectedRow());
             tableView.setModel(coleta.getTabelaTweets());
             verificarArquivo(coleta);
 
@@ -107,7 +109,7 @@ public class TwitterStreamController {
 
     private static void verificarAtivos() {
         for (int i = 0; i < tableTR.getRowCount(); i++) {
-            TwitterStreamCollect obj = (TwitterStreamCollect) manipuladorTR.getSelecionado(i);
+            TwitterStreamCollect obj = (TwitterStreamCollect) MANIPULADORTR.getSelecionado(i);
             ativos.add(obj);
         }
         int contador = 0;

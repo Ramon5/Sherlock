@@ -39,7 +39,7 @@ import tablemodel.TableModelSearch;
  */
 public interface ManipuladorTabela {
     
-    static TableModelSearch manipulador = new TableModelSearch();
-    static TableModelStream manipuladorTR = new TableModelStream();
+    static TableModelSearch MANIPULADOR = new TableModelSearch();
+    static TableModelStream MANIPULADORTR = new TableModelStream();
     
 }

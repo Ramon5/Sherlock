@@ -32,6 +32,7 @@ package entidade;
 
 import java.io.File;
 import java.util.Date;
+import tablemodel.TableModelStream;
 
 /**
  *
@@ -44,6 +45,8 @@ public class TweetStream extends File{
     private String dataInicio;
     private String dataFim;
     private boolean ativo = false;
+    private TableModelStream model;
+    
 
     public TweetStream(String string) {
         super(string);
@@ -87,6 +90,14 @@ public class TweetStream extends File{
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public TableModelStream getModel() {
+        return model;
+    }
+
+    public void setModel(TableModelStream model) {
+        this.model = model;
     }
 
        

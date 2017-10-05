@@ -53,21 +53,20 @@ public class GerenciadorLimite {
         logger = Logger.getLogger(GerenciadorLimite.class);
     }
 
+    /**
+     * Rodizio de tokens
+     * @param limit 
+     */
     public void checarLimite(RateLimitStatusEvent limit) {
         List<Chave> chaves = SherlockGUI.keys;
-
+        int chave = AutenticacaoAPI.indiceChave;
         if (chaves.size() > 1) {
-            for (int i = 0; i < chaves.size(); i++) {
-                if (i < chaves.size() - 1) {
-                    AutenticacaoAPI.indiceChave = i+1;
-                    AutenticacaoAPI.appAutentication(chaves.get(i + 1));
-                    break;
-                } else {
-                    AutenticacaoAPI.indiceChave = 0;
-                    AutenticacaoAPI.appAutentication(chaves.get(0));
-                    break;
-                }
-
+            if(chave < chaves.size()){
+                AutenticacaoAPI.indiceChave++;
+                AutenticacaoAPI.appAutentication(chaves.get(AutenticacaoAPI.indiceChave));
+            }else{
+                AutenticacaoAPI.indiceChave = 0;
+                AutenticacaoAPI.appAutentication(chaves.get(AutenticacaoAPI.indiceChave));
             }
 
         } else {
@@ -80,7 +79,6 @@ public class GerenciadorLimite {
                             status.setText("\nLimite atingido!! Esperando: " + i + " segundos");
                             Thread.sleep(1000);
                         } catch (InterruptedException ex) {
-                            ex.printStackTrace();
                             logger.error(ex);
                         }
                     }
@@ -98,7 +96,6 @@ public class GerenciadorLimite {
                         status.setText("\nLimite atingido!! Esperando: " + i + " segundos");
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
-                        ex.printStackTrace();
                         logger.error(ex);
                     }
                 }

@@ -201,7 +201,7 @@ public final class TwitterSearch extends Thread implements ManipuladorTabela {
                 finalizado = listTweets.size();
 
                 for (Status tweet : listTweets) {
-                    manipulador.addTweet(getTweet(tweet));
+                    MANIPULADOR.addTweet(getTweet(tweet));
                     scroll.getVerticalScrollBar().setValue(table.getHeight());
                     quantidade.setText(String.valueOf(count));
                     max_id = Math.min(tweet.getId(), max_id);
