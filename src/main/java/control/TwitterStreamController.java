@@ -34,7 +34,7 @@ import dao.ColetaDAO;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import util.Mensagem;
+import view.Mensagem;
 import engines.TwitterStreamCollect;
 import entidade.Chave;
 import entidade.Coleta;
@@ -97,8 +97,9 @@ public class TwitterStreamController {
     }
 
     public void coletarStreams() {
-        if (arquivoStream != null && !arquivoStream.getArquivoTweet().isAtivo()) {          
-            arquivoStream.start();
+        if (arquivoStream != null && !arquivoStream.getArquivoTweet().isAtivo()) { 
+            Thread tStream = new Thread(arquivoStream);
+            tStream.start();
             verificarArquivo(arquivoStream);
         }
     }
@@ -152,8 +153,7 @@ public class TwitterStreamController {
      */
     private static void mensagem() {
         Mensagem msg;
-        String text = System.getProperty("user.home") + "/SherlockTM/Dataset/";
-        msg = new Mensagem(null, true, text);
+        msg = new Mensagem(null, true);
         msg.setTitulo("Tweet Stream");
         msg.setLocationRelativeTo(null);
         msg.setVisible(true);

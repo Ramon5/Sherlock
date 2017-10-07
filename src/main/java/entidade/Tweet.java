@@ -40,7 +40,6 @@ public class Tweet {
     private Integer retweet;
     private Double latitude;
     private Double longitude;
-    private String api;
 
     private Coleta coleta;
 
@@ -147,15 +146,6 @@ public class Tweet {
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
-
-    public String getApi() {
-        return api;
-    }
-
-    public void setApi(String api) {
-        this.api = api;
-    }
-    
     
 
 }

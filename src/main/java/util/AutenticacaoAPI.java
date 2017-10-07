@@ -60,7 +60,7 @@ public class AutenticacaoAPI {
     public static boolean autenticadoMaps;
     public static GeoApiContext context;
     public static String chaveAPI;
-    public static OAuth2Authorization oauth;
+    public static OAuthAuthorization oauth;
     public static String keyMap;
     public static int indiceChave;
 
@@ -90,6 +90,7 @@ public class AutenticacaoAPI {
                 twitter = new TwitterFactory(config.build()).getInstance();
 
                 autenticado = true;
+                setStreamAutorization(chave);
 
             } catch (TwitterException ex) {
                 java.util.logging.Logger.getLogger(AutenticacaoAPI.class.getName()).log(Level.SEVERE, null, ex);
@@ -99,6 +100,19 @@ public class AutenticacaoAPI {
             JOptionPane.showMessageDialog(null, "Você não está autenticado!");
         }
 
+    }
+    
+    private static void setStreamAutorization(Chave chave){
+        ConfigurationBuilder config = new ConfigurationBuilder();
+        config.setDebugEnabled(true);
+        config.setPrettyDebugEnabled(true);
+        config.setOAuthConsumerKey(chave.getConsumerKey());
+        config.setOAuthConsumerSecret(chave.getConsumerSecret());
+        config.setOAuthAccessToken(chave.getAccessToken());
+        config.setOAuthAccessTokenSecret(chave.getAccessSecret());
+        OAuthAuthorization auth = new OAuthAuthorization(config.build());
+        
+        oauth = auth;
     }
 
     public static void autenticarMaps() {

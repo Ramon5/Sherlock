@@ -28,7 +28,7 @@ public class TweetDAO {
 
     public boolean salvar(Tweet tweet) {
         try {
-            String sql = "insert into TWEET(idtweet,coleta_idcoleta,tweet,to_user_id,screenname,user_id,favorite_count,created_at,lang,retweet,latitude,longitude,api) values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String sql = "insert into TWEET(idtweet,coleta_idcoleta,tweet,to_user_id,screenname,user_id,favorite_count,created_at,lang,retweet,latitude,longitude) values(?,?,?,?,?,?,?,?,?,?,?,?)";
             stmt = conection.prepareStatement(sql);
             stmt.setLong(1, tweet.getIdTweet());
             stmt.setLong(2, tweet.getColeta().getIdColeta());
@@ -42,7 +42,6 @@ public class TweetDAO {
             stmt.setInt(10, tweet.getRetweet());
             stmt.setDouble(11, tweet.getLatitude());
             stmt.setDouble(12, tweet.getLongitude());
-            stmt.setString(13, tweet.getApi());
 
             boolean save = stmt.execute();
             stmt.close();
@@ -83,7 +82,6 @@ public class TweetDAO {
                 t.setRetweet(result.getInt("retweet"));
                 t.setLatitude(result.getDouble("latitude"));
                 t.setLongitude(result.getDouble("longitude"));
-                t.setApi(result.getString("api"));
 
                 lista.add(t);
             }

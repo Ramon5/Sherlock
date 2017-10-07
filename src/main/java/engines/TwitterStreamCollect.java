@@ -50,11 +50,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import listener.Internet;
+import listener.InternetEvent;
+import listener.InternetListener;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import tablemodel.TableModelSearch;
 import tablemodel.TableModelStream;
+import twitter4j.ConnectionLifeCycleListener;
 import twitter4j.FilterQuery;
 import twitter4j.RateLimitStatusEvent;
 import twitter4j.RateLimitStatusListener;
@@ -81,7 +85,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 
-public class TwitterStreamCollect extends Thread implements DetectaSistema {
+public class TwitterStreamCollect extends Internet implements Runnable, DetectaSistema {
 
     private String query;
     private Logger logger;
@@ -105,6 +109,7 @@ public class TwitterStreamCollect extends Thread implements DetectaSistema {
     private Coleta coleta;
     private TweetDAO tDAO;
     private Chave chave;
+    private boolean internet;
 
     public TwitterStreamCollect(String query) {
         this.query = query;
@@ -114,6 +119,7 @@ public class TwitterStreamCollect extends Thread implements DetectaSistema {
         limite = new GerenciadorLimite(labelSt);
         filename = query;
         tDAO = new TweetDAO();
+        internet = true;
     }
 
     public TableModelSearch getTabelaTweets() {
@@ -156,22 +162,27 @@ public class TwitterStreamCollect extends Thread implements DetectaSistema {
     public void run() {
         collectRealTime();
     }
-    
-    
 
     /**
      * Método responsável por realizar a coleta em tempo real
      *
      * @param chave
      */
-    private void collectRealTime() {        
-        
-        twitterSt = new TwitterStreamFactory().getInstance(getAutorization());
+    private void collectRealTime() {
+
+        twitterSt = new TwitterStreamFactory().getInstance(AutenticacaoAPI.oauth);
         arquivoColeta.setAtivo(true);
         arquivoColeta.setDataInicio(getData());
         tabelaTweets.atualizar();
         labelSt.setText("Coletando...");
-        
+
+        addInternetListener(new InternetListener() {
+            @Override
+            public void conectado(InternetEvent evt) {
+                internet = evt.getSource().isConectado();
+            }
+        });
+
         twitterSt.addRateLimitStatusListener(new RateLimitStatusListener() {
 
             @Override
@@ -184,12 +195,12 @@ public class TwitterStreamCollect extends Thread implements DetectaSistema {
                 limite.checarLimite(event);
             }
         });
+
         StatusListener listener = new StatusListener() {
 
             @Override
             public void onException(Exception arg0) {
-                arg0.printStackTrace();
-                //logger.error(arg0);
+                logger.error(arg0);
             }
 
             @Override
@@ -200,16 +211,19 @@ public class TwitterStreamCollect extends Thread implements DetectaSistema {
 
             @Override
             public void onStatus(Status tweet) {
-                coletar(tweet);
-                contador++;
-                arquivoColeta.setQuantidade(contador);
-                SherlockGUI.modelStream.refreshData(linha);
-                dataFinal = tweet.getCreatedAt();
+                if (internet) {
+                    labelSt.setText("Coletando...");
+                    coletar(tweet);
+                    contador++;
+                    arquivoColeta.setQuantidade(contador);
+                    SherlockGUI.modelStream.refreshData(linha);
+                    dataFinal = tweet.getCreatedAt();
+                }
             }
 
             @Override
             public void onStallWarning(StallWarning arg0) {
-
+                labelSt.setText(arg0.getMessage());
             }
 
             @Override
@@ -226,19 +240,6 @@ public class TwitterStreamCollect extends Thread implements DetectaSistema {
         configurarStream(listener);
 
     }
-    
-    private OAuthAuthorization getAutorization(){
-        ConfigurationBuilder config = new ConfigurationBuilder();
-        config.setDebugEnabled(true);
-        config.setPrettyDebugEnabled(true);
-        config.setOAuthConsumerKey(chave.getConsumerKey());
-        config.setOAuthConsumerSecret(chave.getConsumerSecret());
-        config.setOAuthAccessToken(chave.getAccessToken());
-        config.setOAuthAccessTokenSecret(chave.getAccessSecret());
-        OAuthAuthorization auth = new OAuthAuthorization(config.build());
-        
-        return auth;
-    }
 
     public void setScroll(JScrollPane scroll, JTable table) {
         this.scroll = scroll;
@@ -247,12 +248,11 @@ public class TwitterStreamCollect extends Thread implements DetectaSistema {
 
     private void configurarStream(StatusListener listener) {
         if (AutenticacaoAPI.autenticado) {
-            filter = new FilterQuery();            
+            filter = new FilterQuery();
             filter.track(query);
             filter.language("pt");
             twitterSt.addListener(listener);
             twitterSt.filter(filter);
-            
 
         } else {
             JOptionPane.showMessageDialog(null, "Você não possui credenciais para acessar o Twitter!");
@@ -292,7 +292,6 @@ public class TwitterStreamCollect extends Thread implements DetectaSistema {
         tw.setTo_user_id(status.getInReplyToUserId());
         tw.setFavorite_count(status.getFavoriteCount());
         tw.setLang(status.getLang());
-        tw.setApi("stream");
         if (status.isRetweet()) {
             tw.setRetweet(1);
         } else {
@@ -328,8 +327,7 @@ public class TwitterStreamCollect extends Thread implements DetectaSistema {
                 arquivoColeta.setDataFim(dataFormato.format(dataFinal));
             }
 
-            this.interrupt();
-            
+
         } catch (IllegalStateException ex) {
             logger.error(ex);
             JOptionPane.showMessageDialog(null, "Erro: " + ex.getLocalizedMessage());

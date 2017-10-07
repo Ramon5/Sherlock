@@ -24,7 +24,7 @@
  */
 package engines;
 
-import util.Mensagem;
+import view.Mensagem;
 import dao.TweetDAO;
 import entidade.Coleta;
 import entidade.Tweet;
@@ -35,8 +35,12 @@ import java.util.List;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import listener.Internet;
+import listener.InternetEvent;
+import listener.InternetListener;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import tablemodel.TableModelSearch;
@@ -48,7 +52,7 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 import util.AutenticacaoAPI;
 
-public final class TwitterSearch extends Thread {
+public final class TwitterSearch extends Internet implements Runnable {
 
     private String termo;
     private JLabel status;
@@ -73,6 +77,7 @@ public final class TwitterSearch extends Thread {
     private Coleta coleta;
     private TweetDAO tDAO;
     private TableModelSearch model;
+    private boolean internet;
 
     /**
      * Construtor
@@ -89,6 +94,7 @@ public final class TwitterSearch extends Thread {
         this.logger = Logger.getLogger(TwitterSearch.class);
         criarListener();
         tDAO = new TweetDAO();
+        internet = true;
     }
 
     public void setColeta(Coleta coleta) {
@@ -142,6 +148,13 @@ public final class TwitterSearch extends Thread {
                 limite.checarLimite(event);
             }
         });
+        
+        addInternetListener(new InternetListener() {
+            @Override
+            public void conectado(InternetEvent evt) {
+                internet = evt.getSource().isConectado();
+            }
+        });
     }
 
     /**
@@ -163,8 +176,6 @@ public final class TwitterSearch extends Thread {
         }
         //coleta de acordo com o tema informado
         efetuarColeta(query);
-
-        this.interrupt();
 
     }
 
@@ -194,6 +205,10 @@ public final class TwitterSearch extends Thread {
 
             do {
 
+                while(!internet){
+                    status.setText("Aguardando conexão com a internet...");
+                }
+                
                 result = AutenticacaoAPI.twitter.search(query);
 
                 status.setText("Coletando...");
@@ -219,12 +234,19 @@ public final class TwitterSearch extends Thread {
                 //Condicao de parada; verifica se a data limite foi atingida ou se nenhum termo foi encontrado
             } while (dataRef.after(dataLimite) && finalizado > 0);
 
-        } catch (TwitterException e ) {
+        } catch (TwitterException e ) {            
             if (e.exceededRateLimitation()) {
+                System.out.println(e);
                 logger.error(e);
 
             } else if (e.resourceNotFound()) {
+                System.out.println(e);
                 logger.error(e);
+                
+            }else if(e.isCausedByNetworkIssue()){
+                System.out.println(e);
+                logger.error(e);
+                JOptionPane.showMessageDialog(null, "Verifique sua conexão com a internet");
             }
 
         }finally{
@@ -264,7 +286,6 @@ public final class TwitterSearch extends Thread {
         tw.setTo_user_id(status.getInReplyToUserId());
         tw.setFavorite_count(status.getFavoriteCount());
         tw.setLang(status.getLang());
-        tw.setApi("search");
         if (status.isRetweet()) {
             tw.setRetweet(1);
         } else {
@@ -301,9 +322,8 @@ public final class TwitterSearch extends Thread {
      * Informativo do término da coleta
      */
     private void mensagem() {
-        Mensagem msg;
-        String text = System.getProperty("user.home") + "/SherlockTM/Dataset/";
-        msg = new Mensagem(null, true, text);
+        Mensagem msg;        
+        msg = new Mensagem(null, true);
         msg.setTitulo(termo);
         msg.setLocationRelativeTo(null);
         msg.setVisible(true);

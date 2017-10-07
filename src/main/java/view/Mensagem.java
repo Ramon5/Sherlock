@@ -22,7 +22,7 @@
 * MESMO SE AVISADO DA POSSIBILIDADE DE TAIS DANOS.
 *
 */
-package util;
+package view;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -31,6 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import util.DetectaSistema;
+import util.DetectaSistema;
 
 /**
  *
@@ -38,16 +39,13 @@ import util.DetectaSistema;
  */
 public class Mensagem extends javax.swing.JDialog implements DetectaSistema {
 
-    private static String texto;
 
     /**
      * Creates new form Mensagem
      */
-    public Mensagem(java.awt.Frame parent, boolean modal, String texto) {
+    public Mensagem(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        this.texto = texto;
-        lbDir.setText(texto);
     }
 
     public void setTitulo(String texto){
@@ -66,7 +64,6 @@ public class Mensagem extends javax.swing.JDialog implements DetectaSistema {
         jButton2 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         lbQuery = new javax.swing.JLabel();
-        lbDir = new javax.swing.JLabel();
         painelTexto = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         lbOk = new javax.swing.JLabel();
@@ -95,9 +92,6 @@ public class Mensagem extends javax.swing.JDialog implements DetectaSistema {
         lbQuery.setForeground(new java.awt.Color(255, 255, 255));
         jPanel3.add(lbQuery);
 
-        lbDir.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbDir.setText("...");
-
         painelTexto.setLayout(new java.awt.GridLayout(1, 2, 0, 10));
 
         lbOk.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Like-icon.png"))); // NOI18N
@@ -117,7 +111,6 @@ public class Mensagem extends javax.swing.JDialog implements DetectaSistema {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE)
-                    .addComponent(lbDir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(painelTexto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -129,9 +122,7 @@ public class Mensagem extends javax.swing.JDialog implements DetectaSistema {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(painelTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lbDir)
-                .addGap(12, 12, 12)
+                .addGap(39, 39, 39)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -172,7 +163,7 @@ public class Mensagem extends javax.swing.JDialog implements DetectaSistema {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(() -> {
-            Mensagem dialog = new Mensagem(new javax.swing.JFrame(), true, texto);
+            Mensagem dialog = new Mensagem(new javax.swing.JFrame(), true);
             dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosing(java.awt.event.WindowEvent e) {
@@ -189,7 +180,6 @@ public class Mensagem extends javax.swing.JDialog implements DetectaSistema {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JLabel lbDir;
     private javax.swing.JLabel lbOk;
     private javax.swing.JLabel lbQuery;
     private javax.swing.JPanel painelTexto;

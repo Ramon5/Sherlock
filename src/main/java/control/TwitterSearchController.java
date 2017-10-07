@@ -89,7 +89,10 @@ public class TwitterSearchController implements DetectaSistema {
             } else {
                 twitter.setLimite(getDataAtual());
             }
-            twitter.start();
+            
+            Thread tSearch = new Thread(twitter);
+            tSearch.start();
+            
         }else{
             JOptionPane.showMessageDialog(null, "Você precisa de credencias para efetuar as coletas!");
         }
