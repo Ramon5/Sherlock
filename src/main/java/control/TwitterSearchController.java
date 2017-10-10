@@ -42,7 +42,7 @@ import engines.TwitterSearch;
 import entidade.Coleta;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import tablemodel.TableModelSearch;
+import tablemodel.TableModelMeta;
 import util.AutenticacaoAPI;
 import util.DetectaSistema;
 import static util.DetectaSistema.detectarSistema;
@@ -56,9 +56,9 @@ public class TwitterSearchController implements DetectaSistema {
 
     private JScrollPane scroll;
     private JTable table;
-    private TableModelSearch model;
+    private TableModelMeta model;
 
-    public TwitterSearchController(JScrollPane scroll, JTable table, TableModelSearch model) {
+    public TwitterSearchController(JScrollPane scroll, JTable table, TableModelMeta model) {
         this.scroll = scroll;
         this.table = table;
         this.model = model;

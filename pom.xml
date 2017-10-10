@@ -141,6 +141,11 @@
             <artifactId>jaybird-jdk18</artifactId>
             <version>3.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.19</version>
+        </dependency>
 
 
         <dependency>

@@ -74,7 +74,7 @@ public class TweetDAO {
                 t.setIdTweet(result.getLong("idtweet"));
                 t.setTweet(result.getString("tweet"));
                 t.setTo_user_id(result.getLong("to_user_id"));
-                t.setAutor(result.getString("screename"));
+                t.setAutor(result.getString("screenname"));
                 t.setIdUsuario(result.getLong("user_id"));
                 t.setFavorite_count(result.getInt("favorite_count"));
                 t.setDatecreated(result.getDate("created_at"));
@@ -107,6 +107,7 @@ public class TweetDAO {
         }
 
     }
+    
 
     public void closeConnection() {
         try {

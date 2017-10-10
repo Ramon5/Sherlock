@@ -93,7 +93,9 @@ public class AutenticacaoAPI {
                 setStreamAutorization(chave);
 
             } catch (TwitterException ex) {
-                java.util.logging.Logger.getLogger(AutenticacaoAPI.class.getName()).log(Level.SEVERE, null, ex);
+                autenticado = false;
+                JOptionPane.showMessageDialog(null, "Você não está autenticado!");
+                //java.util.logging.Logger.getLogger(AutenticacaoAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             autenticado = false;

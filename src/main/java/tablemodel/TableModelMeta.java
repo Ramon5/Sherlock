@@ -30,7 +30,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import entidade.Tweet;
 
-public class TableModelSearch extends AbstractTableModel {
+public class TableModelMeta extends AbstractTableModel {
 
     /**
      *
@@ -39,7 +39,7 @@ public class TableModelSearch extends AbstractTableModel {
     private final String[] colunas = {"Data do tweet", "ID Tweet" ,"ID Usuário","Usuário", "Local"};
     private final List<Tweet> lista;
 
-    public TableModelSearch() {
+    public TableModelMeta() {
         this.lista = new ArrayList<>();
     }
 

@@ -43,7 +43,7 @@ import listener.InternetEvent;
 import listener.InternetListener;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import tablemodel.TableModelSearch;
+import tablemodel.TableModelMeta;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.RateLimitStatusEvent;
@@ -76,7 +76,7 @@ public final class TwitterSearch extends Internet implements Runnable {
     private boolean retweet;
     private Coleta coleta;
     private TweetDAO tDAO;
-    private TableModelSearch model;
+    private TableModelMeta model;
     private boolean internet;
 
     /**
@@ -85,7 +85,7 @@ public final class TwitterSearch extends Internet implements Runnable {
      * @param botao
      * @param botaoLimpar
      */
-    public TwitterSearch(JButton botao, JButton botaoLimpar, TableModelSearch model) {
+    public TwitterSearch(JButton botao, JButton botaoLimpar, TableModelMeta model) {
         this.botao = botao;
         this.botaoLimpar = botaoLimpar;
         this.model = model;

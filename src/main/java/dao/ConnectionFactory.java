@@ -26,6 +26,7 @@ public class ConnectionFactory {
             con = DriverManager.getConnection("jdbc:firebirdsql:localhost/3050:"+URL,"SYSDBA","masterkey");            
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+            System.exit(0);
         }
         return con;
     }

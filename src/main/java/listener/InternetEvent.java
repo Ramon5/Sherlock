@@ -5,15 +5,13 @@
  */
 package listener;
 
-import java.util.EventObject;
-
 /**
  *
  * @author root
  */
 public class InternetEvent{
     
-   private Internet source;
+   private final Internet source;
 
     public InternetEvent(Internet source) {
         this.source = source;

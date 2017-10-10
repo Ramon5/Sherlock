@@ -56,7 +56,7 @@ import listener.InternetListener;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import tablemodel.TableModelSearch;
+import tablemodel.TableModelMeta;
 import tablemodel.TableModelStream;
 import twitter4j.ConnectionLifeCycleListener;
 import twitter4j.FilterQuery;
@@ -98,7 +98,7 @@ public class TwitterStreamCollect extends Internet implements Runnable, DetectaS
     private long contador = 0;
     private Date dataFinal;
     private int linha;
-    private TableModelSearch tabelaTweets;
+    private TableModelMeta tabelaTweets;
     private JLabel labelSt;
 
     private TweetStream arquivoColeta;
@@ -122,11 +122,11 @@ public class TwitterStreamCollect extends Internet implements Runnable, DetectaS
         internet = true;
     }
 
-    public TableModelSearch getTabelaTweets() {
+    public TableModelMeta getTabelaTweets() {
         return tabelaTweets;
     }
 
-    public void setTabelaTweets(TableModelSearch tabelaTweets) {
+    public void setTabelaTweets(TableModelMeta tabelaTweets) {
         this.tabelaTweets = tabelaTweets;
     }
 

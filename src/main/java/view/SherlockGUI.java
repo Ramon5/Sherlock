@@ -37,7 +37,7 @@ import entidade.Coleta;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import tablemodel.TableModelSearch;
+import tablemodel.TableModelMeta;
 import tablemodel.TableModelStream;
 import util.AutenticacaoAPI;
 import util.DetectaSistema;
@@ -53,18 +53,18 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
     public static List<Chave> keys;
     private ChaveDAO cDAO;
     private AuthDAO aDAO;
-    private TableModelSearch modelSearch;
+    private TableModelMeta modelSearch;
     public static TableModelStream modelStream;
-    private TableModelSearch modelView;
+    private TableModelMeta modelView;
 
     /**
      * Creates new form SherlockGUI
      */
     public SherlockGUI() {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        modelSearch = new TableModelSearch();
+        modelSearch = new TableModelMeta();
         modelStream = new TableModelStream();
-        modelView = new TableModelSearch();
+        modelView = new TableModelMeta();
         initComponents();
         keys = new ArrayList<>();
         cDAO = new ChaveDAO();
@@ -148,6 +148,7 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
         menuSobre = new javax.swing.JMenuItem();
@@ -482,6 +483,14 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         });
         jMenu1.add(jMenuItem6);
 
+        jMenuItem2.setText("Coletas");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
         jMenuBar1.add(jMenu1);
 
         jMenu3.setText("Ajuda");
@@ -624,6 +633,12 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         }
     }//GEN-LAST:event_campoBuscaKeyPressed
 
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        ColetasGUI coletaGUI = new ColetasGUI(this, rootPaneCheckingEnabled);
+        coletaGUI.setLocationRelativeTo(this);
+        coletaGUI.setVisible(true);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
     private void limpar() {
         lbData.setText("...");
         lbStatus.setText("...");
@@ -699,6 +714,7 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;

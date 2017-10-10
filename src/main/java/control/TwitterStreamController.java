@@ -42,7 +42,7 @@ import entidade.TweetStream;
 import java.util.Calendar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import tablemodel.TableModelSearch;
+import tablemodel.TableModelMeta;
 import tablemodel.TableModelStream;
 import view.SherlockGUI;
 import static view.SherlockGUI.btnColetaReal;
@@ -87,7 +87,7 @@ public class TwitterStreamController {
         stream.setStatus(SherlockGUI.lbStatusReal);
         stream.setChave(chave);
         stream.setColeta(coleta);
-        TableModelSearch tabelaTweets = new TableModelSearch();
+        TableModelMeta tabelaTweets = new TableModelMeta();
         stream.setTabelaTweets(tabelaTweets);
         
         SherlockGUI.modelStream.addTweet(stream);
