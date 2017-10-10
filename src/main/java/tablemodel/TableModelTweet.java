@@ -42,7 +42,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class TableModelTweet extends AbstractTableModel{
 
-    private final String[] colunas = {"ID TWEET", "TWEET","USUÁRIO","ID USUÁRIO","DATA"};
+    private final String[] colunas = {"ID TWEET", "TWEET","EM RESPOSTA","USUÁRIO","ID USUÁRIO","QTD FAVORITO","DATA","LANG","RETWEET","LATITUDE","LONGITUDE"};
     private final List<Tweet> lista;
 
     public TableModelTweet() {
@@ -77,11 +77,23 @@ public class TableModelTweet extends AbstractTableModel{
             case 1:
                 return lista.get(rowIndex).getTweet();
             case 2:
-                return lista.get(rowIndex).getAutor();
+                return lista.get(rowIndex).getTo_user_id();
             case 3:
-                return lista.get(rowIndex).getIdUsuario();
+                return lista.get(rowIndex).getAutor();
             case 4:
+                return lista.get(rowIndex).getIdUsuario();
+            case 5:
+                return lista.get(rowIndex).getFavorite_count();
+            case 6:
                 return lista.get(rowIndex).getDatecreated();
+            case 7:
+                return lista.get(rowIndex).getLang();
+            case 8:
+                return lista.get(rowIndex).getRetweet();
+            case 9:
+                return lista.get(rowIndex).getLatitude();
+            case 10:
+                return lista.get(rowIndex).getLongitude();
             
         }
         return null;
@@ -94,15 +106,27 @@ public class TableModelTweet extends AbstractTableModel{
         
         tweet.setIdTweet(aValue.getIdTweet());
         tweet.setTweet(aValue.getTweet());
+        tweet.setTo_user_id(aValue.getTo_user_id());
         tweet.setAutor(aValue.getAutor());
         tweet.setIdUsuario(aValue.getIdUsuario());
+        tweet.setFavorite_count(aValue.getFavorite_count());
         tweet.setDatecreated(aValue.getDatecreated());
+        tweet.setLang(aValue.getLang());
+        tweet.setRetweet(aValue.getRetweet());
+        tweet.setLatitude(aValue.getLatitude());
+        tweet.setLongitude(aValue.getLongitude());
         
         fireTableCellUpdated(rowIndex, 0);
         fireTableCellUpdated(rowIndex, 1);
         fireTableCellUpdated(rowIndex, 2);
         fireTableCellUpdated(rowIndex, 3);
         fireTableCellUpdated(rowIndex, 4);
+        fireTableCellUpdated(rowIndex, 5);
+        fireTableCellUpdated(rowIndex, 6);
+        fireTableCellUpdated(rowIndex, 7);
+        fireTableCellUpdated(rowIndex, 8);
+        fireTableCellUpdated(rowIndex, 9);
+        fireTableCellUpdated(rowIndex, 10);
 
     }
 
@@ -116,12 +140,24 @@ public class TableModelTweet extends AbstractTableModel{
             case 1:
                 tweet.setTweet(aValue.toString());
             case 2:
-                tweet.setAutor(aValue.toString());
+                tweet.setTo_user_id(Long.parseLong(aValue.toString()));
             case 3:
-                tweet.setIdUsuario(Long.parseLong(aValue.toString()));
+                tweet.setAutor(aValue.toString());
             case 4:
+                tweet.setIdUsuario(Long.parseLong(aValue.toString()));
+            case 5:
+                tweet.setFavorite_count(Integer.parseInt(aValue.toString()));
+            case 6:
                 Date data = (Date) aValue;
                 tweet.setDatecreated(data);
+            case 7:
+                tweet.setLang(aValue.toString());
+            case 8:
+                tweet.setRetweet(Integer.parseInt(aValue.toString()));
+            case 9:
+                tweet.setLatitude(Double.parseDouble(aValue.toString()));
+            case 10:
+                tweet.setLongitude(Double.parseDouble(aValue.toString()));
                 
             default:
                 System.err.println("Índice da coluna inválido");

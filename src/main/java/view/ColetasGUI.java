@@ -32,9 +32,12 @@ package view;
 
 import dao.ColetaDAO;
 import dao.TweetDAO;
-import engines.Graficos;
+import graficos.GraficoPizza;
 import entidade.Coleta;
 import entidade.Tweet;
+import graficos.Grafico;
+import graficos.GraficoBarras;
+import java.awt.BorderLayout;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -53,7 +56,6 @@ public class ColetasGUI extends javax.swing.JDialog {
     private List<Coleta> coletas;
     private TweetDAO tweetDAO;
     private List<Tweet> tweets;
-    private Graficos grafico;
 
     /**
      * Creates new form ColetasGUI
@@ -68,7 +70,6 @@ public class ColetasGUI extends javax.swing.JDialog {
         coletas = colDAO.listar();
         colDAO.closeConnection();
         preencherColetas(coletas);
-        grafico = new Graficos();
     }
 
     private void preencherColetas(List<Coleta> list) {
@@ -91,22 +92,17 @@ public class ColetasGUI extends javax.swing.JDialog {
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lbTotal = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        lbOriginais = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        lbRetweets = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jPanel5 = new javax.swing.JPanel();
-        btnOriginal = new javax.swing.JButton();
-        btnRetweet = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tableTweets = new javax.swing.JTable();
         jScrollPane4 = new javax.swing.JScrollPane();
         tableColeta = new javax.swing.JTable();
+        painelPizza = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        jPanel1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
+        painelBarra = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -115,64 +111,16 @@ public class ColetasGUI extends javax.swing.JDialog {
             }
         });
 
-        jPanel3.setLayout(new java.awt.GridLayout(3, 2));
-
-        jLabel1.setText("Quantidade total de tweets:");
+        jLabel1.setText("Qtd. Total de Tweets:");
         jPanel3.add(jLabel1);
 
         lbTotal.setForeground(new java.awt.Color(0, 0, 204));
         lbTotal.setText("0");
         jPanel3.add(lbTotal);
 
-        jLabel2.setText("Quantidade de tweets originais:");
-        jPanel3.add(jLabel2);
-
-        lbOriginais.setForeground(new java.awt.Color(0, 0, 204));
-        lbOriginais.setText("0");
-        jPanel3.add(lbOriginais);
-
-        jLabel3.setText("Quantidade de retweets:");
-        jPanel3.add(jLabel3);
-
-        lbRetweets.setForeground(new java.awt.Color(0, 0, 204));
-        lbRetweets.setText("0");
-        jPanel3.add(lbRetweets);
-
         jPanel4.setBackground(new java.awt.Color(51, 51, 51));
 
         jLabel4.setText("Coletas:");
-
-        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
-
-        btnOriginal.setText("Originais");
-        btnOriginal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOriginalActionPerformed(evt);
-            }
-        });
-        jPanel5.add(btnOriginal);
-
-        btnRetweet.setText("Retweets");
-        btnRetweet.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRetweetActionPerformed(evt);
-            }
-        });
-        jPanel5.add(btnRetweet);
-
-        jButton4.setText("Exportar");
-        jPanel5.add(jButton4);
-
-        jButton5.setText("Gráficos");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
-        jPanel5.add(jButton5);
-
-        tableTweets.setModel(modelTweet);
-        jScrollPane3.setViewportView(tableTweets);
 
         tableColeta.setModel(modelColeta);
         tableColeta.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -182,7 +130,24 @@ public class ColetasGUI extends javax.swing.JDialog {
         });
         jScrollPane4.setViewportView(tableColeta);
 
-        jLabel5.setText("Tweets:");
+        painelPizza.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        painelPizza.setLayout(new java.awt.BorderLayout());
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+
+        jButton1.setText("Exibir Coletas");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton1);
+
+        jLabel5.setText("Estatísticas");
+        jPanel1.add(jLabel5);
+
+        painelBarra.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        painelBarra.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -191,22 +156,24 @@ public class ColetasGUI extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
-                                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                        .addGap(11, 11, 11))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 866, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jSeparator1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(painelBarra, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(painelPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -219,25 +186,29 @@ public class ColetasGUI extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(33, 33, 33)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(painelPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(painelBarra, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void tableColetaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableColetaMouseClicked
-        exibirTweets();
+        calcular();
     }//GEN-LAST:event_tableColetaMouseClicked
 
-    private void exibirTweets() {
+    /*private void exibirTweets() {
         modelTweet.limparTabela();
         Coleta coleta = (Coleta) modelColeta.getSelecionado(tableColeta.getSelectedRow());
         if (coleta != null) {
@@ -250,27 +221,53 @@ public class ColetasGUI extends javax.swing.JDialog {
             calcular();
             tweets.clear();
         }
-    }
-
+    }*/
     private void calcular() {
-        int qtdTotal = tweets.size();
-        int qtdOriginais = 0;
-        int qtdRetweets = 0;
-        int qtdGeo = 0;
+        Coleta coleta = (Coleta) modelColeta.getSelecionado(tableColeta.getSelectedRow());
+        tweets = tweetDAO.getTweets(coleta);
+        if (coleta != null) {
+            int qtdTotal = tweets.size();
+            int qtdOriginais = 0;
+            int qtdRetweets = 0;
+            int qtdGeo = 0;
 
-        for (Tweet t : tweets) {
-            if (t.getRetweet() == 0) {
-                qtdOriginais++;
+            for (Tweet t : tweets) {
+                if (t.getRetweet() == 0) {
+                    qtdOriginais++;
+                }
+                if (t.getLatitude() != 0.0 && t.getLongitude() != 0) {
+                    qtdGeo++;
+                }
             }
-            if (t.getLatitude() != 0.0 && t.getLongitude() != 0) {
-                qtdGeo++;
+            qtdRetweets = qtdTotal - qtdOriginais;
+
+            lbTotal.setText(String.valueOf(qtdTotal));
+            Grafico grafico = new GraficoPizza();
+            grafico.addValue("originais", qtdOriginais);
+            grafico.addValue("retweets", qtdRetweets);
+            if(qtdGeo > 0){
+                grafico.addValue("georeferenciados", qtdGeo);
             }
+            grafico.criarDataset();
+            JPanel graf = grafico.criarGrafico();
+            painelPizza.removeAll();
+            painelPizza.add(graf, BorderLayout.CENTER);
+            graf.setVisible(true);
+            painelPizza.updateUI();
+            
+            Grafico bar = new GraficoBarras();
+            bar.addValue("originais", qtdOriginais);
+            bar.addValue("retweets", qtdRetweets);
+            if(qtdGeo > 0){
+                bar.addValue("georeferenciados", qtdGeo);
+            }
+            bar.criarDataset();
+            JPanel barra = bar.criarGrafico();
+            painelBarra.removeAll();
+            painelBarra.add(barra,BorderLayout.CENTER);
+            barra.setVisible(true);
+            painelBarra.updateUI();
         }
-        qtdRetweets = qtdTotal - qtdOriginais;
-
-        lbTotal.setText(String.valueOf(qtdTotal));
-        lbOriginais.setText(String.valueOf(qtdOriginais));
-        lbRetweets.setText(String.valueOf(qtdRetweets));
     }
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -279,41 +276,23 @@ public class ColetasGUI extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_formWindowClosing
 
-    private void btnOriginalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOriginalActionPerformed
-        exibirTweets(0);
-    }//GEN-LAST:event_btnOriginalActionPerformed
-
-    private void btnRetweetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRetweetActionPerformed
-        exibirTweets(1);
-    }//GEN-LAST:event_btnRetweetActionPerformed
-
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        grafico.addValue("originais", Double.parseDouble(lbOriginais.getText()));
-        grafico.addValue("retweets", Double.parseDouble(lbRetweets.getText()));
-        grafico.criarDataset();
-        JPanel graf = grafico.getGrafico();
-        Grafico gui = new Grafico(graf);
-        graf.setVisible(true);
-        gui.setLocationRelativeTo(this);
-        gui.setVisible(true);
-    }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void exibirTweets(int opcao){
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         modelTweet.limparTabela();
         Coleta coleta = (Coleta) modelColeta.getSelecionado(tableColeta.getSelectedRow());
         if (coleta != null) {
             tweets = tweetDAO.getTweets(coleta);
             if (tweets != null && tweets.size() > 0) {
                 for (Tweet t : tweets) {
-                    if (t.getRetweet() == opcao) {
-                        modelTweet.addTweet(t);
-                    }
+                    modelTweet.addTweet(t);
                 }
             }
+            TweetsGUI tgui = new TweetsGUI(modelTweet, tweets);
+            tgui.setLocationRelativeTo(this);
+            tgui.setVisible(true);
             tweets.clear();
         }
-    }
-    
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -342,39 +321,32 @@ public class ColetasGUI extends javax.swing.JDialog {
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                ColetasGUI dialog = new ColetasGUI(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            ColetasGUI dialog = new ColetasGUI(new javax.swing.JFrame(), true);
+            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    System.exit(0);
+                }
+            });
+            dialog.setVisible(true);
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnOriginal;
-    private javax.swing.JButton btnRetweet;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JLabel lbOriginais;
-    private javax.swing.JLabel lbRetweets;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lbTotal;
+    private javax.swing.JPanel painelBarra;
+    private javax.swing.JPanel painelPizza;
     private javax.swing.JTable tableColeta;
-    private javax.swing.JTable tableTweets;
     // End of variables declaration//GEN-END:variables
 }
