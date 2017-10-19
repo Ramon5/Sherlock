@@ -30,58 +30,53 @@
  */
 package graficos;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.PieSectionLabelGenerator;
-import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
-import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.Dataset;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
+import org.jfree.data.xy.XYDataItem;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  *
  * @author root
  */
-public class GraficoPizza extends Grafico{
+public class GraficoLinhas extends Grafico {
+    
+    private DefaultCategoryDataset dataset;
+    
 
-    private DefaultPieDataset dataset;
-
-    public GraficoPizza() {
-        dataset = new DefaultPieDataset();
-    }
-
+    public GraficoLinhas() {
+        this.dataset = new DefaultCategoryDataset();
+    }    
+    
 
     @Override
     public void saveDataset(String columnkey) {
-        if (values.size() > 0) {
-            for (Map.Entry<String, Object> map : values.entrySet()) {
-                dataset.setValue(map.getKey(), (double) map.getValue());                
-            }
+        for (Map.Entry<String, Object> map : values.entrySet()) {
+            dataset.addValue((double) map.getValue(), map.getKey(), columnkey);
         }
-    }
+    }    
+    
 
     @Override
     public JPanel criarGrafico() {
-        JFreeChart chart = ChartFactory.createPieChart("Percentual", dataset, true, true, false);
-        PiePlot plot = (PiePlot) chart.getPlot();
-        plot.setSimpleLabels(true);
-        PieSectionLabelGenerator gen = new StandardPieSectionLabelGenerator(
-            "{2}", new DecimalFormat("0"), new DecimalFormat("0%"));
-        plot.setLabelGenerator(gen);
+        String chartTitle = "Quantitativo";
+        String xAxisLabel = "Legenda";
+        String yAxisLabel = "Quantidade";
+
+        JFreeChart chart = ChartFactory.createLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset, PlotOrientation.VERTICAL, true, true, false);
+        CategoryPlot plot = (CategoryPlot) chart.getCategoryPlot();
+        plot.setDomainGridlinesVisible(true);
         
-        
+
         return new ChartPanel(chart);
     }
 
-    
 }

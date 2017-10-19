@@ -61,10 +61,9 @@ public class TweetDAO {
         }
     }
 
-    public List<Tweet> getTweets(Coleta coleta) {
+    public List<Tweet> getTweets(Coleta coleta, String sql) {
         List<Tweet> lista = new ArrayList<>();
-        try {
-            String sql = "select * from tweet as t inner join coleta as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ?";
+        try {            
             stmt = conection.prepareStatement(sql);
             stmt.setLong(1, coleta.getIdColeta());
             result = stmt.executeQuery();
@@ -107,7 +106,36 @@ public class TweetDAO {
         }
 
     }
-    
+
+    public int getCount(String sql, Coleta coleta, int retweet) {
+        int count = 0;
+        try {            
+            stmt = conection.prepareStatement(sql);
+            stmt.setLong(1, coleta.getIdColeta());
+            result = stmt.executeQuery();            
+            
+            if (result.next()) {
+                count = result.getInt("quantidade");
+            }
+
+            return count;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(TweetDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if(result != null){
+                    result.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TweetDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return count;
+    }
 
     public void closeConnection() {
         try {

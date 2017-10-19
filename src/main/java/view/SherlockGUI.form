@@ -54,7 +54,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem6">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Conversor Weka"/>
+                <Property name="text" type="java.lang.String" value="Weka Converter"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem6ActionPerformed"/>
@@ -62,11 +62,16 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Coletas"/>
+                <Property name="text" type="java.lang.String" value="Database Collects"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem2ActionPerformed"/>
               </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem7">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Corpus Factory"/>
+              </Properties>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -259,8 +264,8 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Coleta Retroativa">
-                <Property name="tabTitle" type="java.lang.String" value="Coleta Retroativa"/>
+              <JTabbedPaneConstraints tabName="Twitter Search">
+                <Property name="tabTitle" type="java.lang.String" value="Twitter Search"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -657,8 +662,8 @@
         <Container class="javax.swing.JPanel" name="jPanel7">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Coleta em Tempo Real">
-                <Property name="tabTitle" type="java.lang.String" value="Coleta em Tempo Real"/>
+              <JTabbedPaneConstraints tabName="Twitter Streaming">
+                <Property name="tabTitle" type="java.lang.String" value="Twitter Streaming"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

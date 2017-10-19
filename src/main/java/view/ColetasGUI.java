@@ -37,12 +37,14 @@ import entidade.Coleta;
 import entidade.Tweet;
 import graficos.Grafico;
 import graficos.GraficoBarras;
+import graficos.GraficoLinhas;
 import java.awt.BorderLayout;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import tablemodel.TableModelColeta;
 import tablemodel.TableModelTweet;
+import util.SQL;
 
 /**
  *
@@ -100,8 +102,6 @@ public class ColetasGUI extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
         painelBarra = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -143,9 +143,6 @@ public class ColetasGUI extends javax.swing.JDialog {
         });
         jPanel2.add(jButton1);
 
-        jLabel5.setText("Estatísticas");
-        jPanel1.add(jLabel5);
-
         painelBarra.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         painelBarra.setLayout(new java.awt.BorderLayout());
 
@@ -172,8 +169,7 @@ public class ColetasGUI extends javax.swing.JDialog {
                         .addComponent(painelPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -193,12 +189,10 @@ public class ColetasGUI extends javax.swing.JDialog {
                 .addGap(33, 33, 33)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(painelPizza, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(painelBarra, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         pack();
@@ -224,50 +218,56 @@ public class ColetasGUI extends javax.swing.JDialog {
     }*/
     private void calcular() {
         Coleta coleta = (Coleta) modelColeta.getSelecionado(tableColeta.getSelectedRow());
-        tweets = tweetDAO.getTweets(coleta);
+        tweets = tweetDAO.getTweets(coleta, SQL.TWEETS);
+
         if (coleta != null) {
             int qtdTotal = tweets.size();
-            int qtdOriginais = 0;
-            int qtdRetweets = 0;
-            int qtdGeo = 0;
+            int qtdOriginais = tweetDAO.getCount(SQL.COUNT_ORIG, coleta, 0);
+            int qtdGeo = tweetDAO.getCount(SQL.GEO, coleta, 0);
+            int qtdReply = tweetDAO.getCount(SQL.REPLY, coleta, 0);            
+            int qtdRetweets = qtdTotal - qtdOriginais;
+            plotar(qtdTotal, qtdOriginais, qtdRetweets, qtdGeo, qtdReply);
 
-            for (Tweet t : tweets) {
-                if (t.getRetweet() == 0) {
-                    qtdOriginais++;
-                }
-                if (t.getLatitude() != 0.0 && t.getLongitude() != 0) {
-                    qtdGeo++;
-                }
-            }
-            qtdRetweets = qtdTotal - qtdOriginais;
-
-            lbTotal.setText(String.valueOf(qtdTotal));
-            Grafico grafico = new GraficoPizza();
-            grafico.addValue("originais", qtdOriginais);
-            grafico.addValue("retweets", qtdRetweets);
-            if(qtdGeo > 0){
-                grafico.addValue("georeferenciados", qtdGeo);
-            }
-            grafico.criarDataset();
-            JPanel graf = grafico.criarGrafico();
-            painelPizza.removeAll();
-            painelPizza.add(graf, BorderLayout.CENTER);
-            graf.setVisible(true);
-            painelPizza.updateUI();
-            
-            Grafico bar = new GraficoBarras();
-            bar.addValue("originais", qtdOriginais);
-            bar.addValue("retweets", qtdRetweets);
-            if(qtdGeo > 0){
-                bar.addValue("georeferenciados", qtdGeo);
-            }
-            bar.criarDataset();
-            JPanel barra = bar.criarGrafico();
-            painelBarra.removeAll();
-            painelBarra.add(barra,BorderLayout.CENTER);
-            barra.setVisible(true);
-            painelBarra.updateUI();
         }
+    }
+
+    private void plotar(int qtdTotal, int qtdOriginais, int qtdRetweets, int qtdGeo, int qtdReply) {
+        lbTotal.setText(String.valueOf(qtdTotal));
+
+        Grafico grafico = new GraficoPizza();
+
+        grafico.addValue("originais", qtdOriginais);
+        grafico.addValue("retweets", qtdRetweets);
+        if (qtdReply > 0) {
+            grafico.addValue("respostas", qtdReply);
+        }
+        if (qtdGeo > 0) {
+            grafico.addValue("georeferenciados", qtdGeo);
+        }
+        grafico.saveDataset(null);
+        JPanel graf = grafico.criarGrafico();
+        painelPizza.removeAll();
+        painelPizza.add(graf, BorderLayout.CENTER);
+        graf.setVisible(true);
+        painelPizza.updateUI();
+
+        Grafico bar = new GraficoBarras();
+
+        bar.addValue("originais", qtdOriginais);
+        bar.addValue("retweets", qtdRetweets);
+        if (qtdReply > 0) {
+            bar.addValue("respostas", qtdReply);
+        }
+        if (qtdGeo > 0) {
+            bar.addValue("georeferenciados", qtdGeo);
+        }
+
+        bar.saveDataset("tweets");
+        JPanel barra = bar.criarGrafico();
+        painelBarra.removeAll();
+        painelBarra.add(barra, BorderLayout.CENTER);
+        barra.setVisible(true);
+        painelBarra.updateUI();
     }
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -280,13 +280,13 @@ public class ColetasGUI extends javax.swing.JDialog {
         modelTweet.limparTabela();
         Coleta coleta = (Coleta) modelColeta.getSelecionado(tableColeta.getSelectedRow());
         if (coleta != null) {
-            tweets = tweetDAO.getTweets(coleta);
+            tweets = tweetDAO.getTweets(coleta, SQL.TWEETS);
             if (tweets != null && tweets.size() > 0) {
                 for (Tweet t : tweets) {
                     modelTweet.addTweet(t);
                 }
             }
-            TweetsGUI tgui = new TweetsGUI(modelTweet, tweets);
+            TweetsGUI tgui = new TweetsGUI(modelTweet, coleta, tweetDAO);
             tgui.setLocationRelativeTo(this);
             tgui.setVisible(true);
             tweets.clear();
@@ -337,8 +337,6 @@ public class ColetasGUI extends javax.swing.JDialog {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;

@@ -149,6 +149,7 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem7 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
         menuSobre = new javax.swing.JMenuItem();
@@ -307,7 +308,7 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
                     .addContainerGap()))
         );
 
-        jTabbedPane1.addTab("Coleta Retroativa", jPanel2);
+        jTabbedPane1.addTab("Twitter Search", jPanel2);
 
         jPanel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
 
@@ -439,7 +440,7 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Coleta em Tempo Real", jPanel7);
+        jTabbedPane1.addTab("Twitter Streaming", jPanel7);
 
         menuOpcoes.setText("Configurações");
 
@@ -475,7 +476,7 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         });
         jMenu1.add(jMenuItem3);
 
-        jMenuItem6.setText("Conversor Weka");
+        jMenuItem6.setText("Weka Converter");
         jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem6ActionPerformed(evt);
@@ -483,13 +484,16 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         });
         jMenu1.add(jMenuItem6);
 
-        jMenuItem2.setText("Coletas");
+        jMenuItem2.setText("Database Collects");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
             }
         });
         jMenu1.add(jMenuItem2);
+
+        jMenuItem7.setText("Corpus Factory");
+        jMenu1.add(jMenuItem7);
 
         jMenuBar1.add(jMenu1);
 
@@ -719,6 +723,7 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

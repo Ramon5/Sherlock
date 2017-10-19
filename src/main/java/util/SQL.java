@@ -28,60 +28,22 @@
  * DECORRENTE DE QUALQUER FORMA FORA DO USO DESTE SOFTWARE, MESMO SE AVISADO DA 
  * POSSIBILIDADE DE TAIS DANOS.
  */
-package graficos;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import javax.swing.JPanel;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.PieSectionLabelGenerator;
-import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
-import org.jfree.chart.plot.PiePlot;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.Dataset;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
+package util;
 
 /**
  *
  * @author root
  */
-public class GraficoPizza extends Grafico{
-
-    private DefaultPieDataset dataset;
-
-    public GraficoPizza() {
-        dataset = new DefaultPieDataset();
-    }
-
-
-    @Override
-    public void saveDataset(String columnkey) {
-        if (values.size() > 0) {
-            for (Map.Entry<String, Object> map : values.entrySet()) {
-                dataset.setValue(map.getKey(), (double) map.getValue());                
-            }
-        }
-    }
-
-    @Override
-    public JPanel criarGrafico() {
-        JFreeChart chart = ChartFactory.createPieChart("Percentual", dataset, true, true, false);
-        PiePlot plot = (PiePlot) chart.getPlot();
-        plot.setSimpleLabels(true);
-        PieSectionLabelGenerator gen = new StandardPieSectionLabelGenerator(
-            "{2}", new DecimalFormat("0"), new DecimalFormat("0%"));
-        plot.setLabelGenerator(gen);
-        
-        
-        return new ChartPanel(chart);
-    }
-
+public class SQL {
     
+    public static final String COUNT_ORIG = "select count(t.idtweet) as quantidade from TWEET as t inner join COLETA as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ? and t.retweet = 0;";
+    public static final String COUNT_RET = "select count(t.idtweet) as quantidade from TWEET as t inner join COLETA as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ? and t.retweet = 1;";
+    public static final String REPLY = "select count(t.idtweet) as quantidade from TWEET as t inner join COLETA as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ? and t.to_user_id <> -1;";
+    public static final String GEO = "select count(t.idtweet) as quantidade from TWEET as t inner join COLETA as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ? and t.latitude <> 0 and t.longitude <> 0;";
+    public static final String TWEETS = "select * from tweet as t inner join coleta as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ?";    
+    public static final String ORIGINAIS = "select * from tweet as t inner join coleta as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ? and t.retweet = 0";
+    public static final String RETWEET = "select * from tweet as t inner join coleta as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = ? and t.retweet = 1";
+    
+    //extrair mês
+    //select extract(month from t.created_at) as mes from TWEET as t inner join COLETA as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = 1;
 }

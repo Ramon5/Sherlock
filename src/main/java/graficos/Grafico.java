@@ -51,7 +51,7 @@ public abstract class Grafico {
         values.put(label, valor);
     }
     
-    public abstract void criarDataset();
+    public abstract void saveDataset(String columnkey);
     
     public abstract JPanel criarGrafico();
     

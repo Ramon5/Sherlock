@@ -30,6 +30,7 @@
  */
 package view;
 
+import dao.TweetDAO;
 import graficos.GraficoPizza;
 import entidade.Coleta;
 import entidade.Tweet;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
 import tablemodel.TableModelTweet;
+import util.SQL;
 
 /**
  *
@@ -46,7 +48,8 @@ import tablemodel.TableModelTweet;
 public class TweetsGUI extends javax.swing.JDialog {
 
     private TableModelTweet model;
-    private List<Tweet> lista;
+    private TweetDAO tweetDAO;
+    private Coleta coleta;
     private List<Tweet> tweets;
 
     /**
@@ -58,10 +61,12 @@ public class TweetsGUI extends javax.swing.JDialog {
         agruparButtons();
     }
 
-    public TweetsGUI(TableModelTweet model, List<Tweet> lista) {
+    public TweetsGUI(TableModelTweet model, Coleta coleta, TweetDAO tweetDAO) {
         this.model = model;
-        this.lista = lista;
+        this.tweetDAO = tweetDAO;
+        this.coleta = coleta;
         initComponents();
+        tweets = new ArrayList<>();
         agruparButtons();
     }
     
@@ -69,21 +74,15 @@ public class TweetsGUI extends javax.swing.JDialog {
         buttonGroup1.add(rbAll);
         buttonGroup1.add(rbFonte);
         buttonGroup1.add(rbRet);
-        tweets = new ArrayList<>();
     }
 
-    private void exibirTweets(int opcao) {
+    private void exibirTweets(String opcao) {
+        tweets = tweetDAO.getTweets(coleta, opcao);
         model.limparTabela();
-        tweets.addAll(lista);
-        if (tweets != null && tweets.size() > 0) {
-            for (Tweet t : tweets) {
-                if (t.getRetweet() != opcao) {
-                    model.addTweet(t);
-                }
-            }
-            tweets.clear();
+        for(Tweet t: tweets){
+            model.addTweet(t);
         }
-
+        tweets.clear();
     }
 
     /**
@@ -162,15 +161,15 @@ public class TweetsGUI extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void rbAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbAllActionPerformed
-        exibirTweets(2);
+        exibirTweets(SQL.TWEETS);
     }//GEN-LAST:event_rbAllActionPerformed
 
     private void rbFonteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbFonteActionPerformed
-        exibirTweets(1);
+        exibirTweets(SQL.ORIGINAIS);
     }//GEN-LAST:event_rbFonteActionPerformed
 
     private void rbRetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbRetActionPerformed
-        exibirTweets(0);
+        exibirTweets(SQL.RETWEET);
     }//GEN-LAST:event_rbRetActionPerformed
 
     /**

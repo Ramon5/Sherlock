@@ -31,45 +31,59 @@
 package graficos;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Map;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.CategoryItemLabelGenerator;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.PieSectionLabelGenerator;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.TextAnchor;
 
 /**
  *
  * @author root
  */
-public class GraficoBarras extends Grafico{
+public class GraficoBarras extends Grafico {
 
     private DefaultCategoryDataset dataset;
 
     public GraficoBarras() {
         this.dataset = new DefaultCategoryDataset();
     }
-    
-    
-    
+
     @Override
-    public void criarDataset() {
-        for(Map.Entry<String,Object> map: values.entrySet()){
-            dataset.setValue((double)map.getValue(), map.getKey(), map.getKey());
-        }        
+    public void saveDataset(String columnkey) {
+        for (Map.Entry<String, Object> map : values.entrySet()) {
+            dataset.setValue((double) map.getValue(), map.getKey(), columnkey);
+        }
     }
 
     @Override
     public JPanel criarGrafico() {
-        JFreeChart chart = ChartFactory.createBarChart("", "Legenda", "Quantidade", dataset, PlotOrientation.VERTICAL, true, true, true);
-               
+        JFreeChart chart = ChartFactory.createBarChart3D("Quantitativo", "Legenda", "Quantidade", dataset, PlotOrientation.VERTICAL, true, true, true);
         
+        CategoryPlot plot = chart.getCategoryPlot();
+        CategoryItemRenderer renderer = plot.getRenderer();
+        renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+        renderer.setBaseItemLabelsVisible(true);
+        
+        ItemLabelPosition position = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12,
+                TextAnchor.TOP_CENTER);
+        renderer.setBasePositiveItemLabelPosition(position);
+
         return new ChartPanel(chart);
     }
-    
+
 }
