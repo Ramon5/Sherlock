@@ -8,6 +8,7 @@ O software ainda está em fase de desenvolvimento, algumas funcionalidades estã
 Requisitos:
 
 Java 8 ou superior
+
 Firebird 2.2.5
 
 
