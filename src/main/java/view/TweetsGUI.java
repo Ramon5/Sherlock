@@ -117,7 +117,7 @@ public class TweetsGUI extends javax.swing.JDialog {
         });
         jPanel1.add(rbAll);
 
-        rbFonte.setText("Somente originais");
+        rbFonte.setText("Somente tweets");
         rbFonte.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbFonteActionPerformed(evt);
