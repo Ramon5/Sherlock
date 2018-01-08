@@ -2,10 +2,22 @@ package view;
 
 import dao.ColetaDAO;
 import dao.TweetDAO;
+import engines.ExporterTweets;
 import entidade.Coleta;
 import entidade.Tweet;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import tablemodel.TableModelColeta;
+import util.PreprocessoStrings;
+import util.SQL;
 
 /**
  *
@@ -16,8 +28,8 @@ public class CorpusGUI extends javax.swing.JDialog {
     private TableModelColeta modelColeta;
     private ColetaDAO colDAO;
     private List<Coleta> coletas;
-    private TweetDAO tweetDAO;
-    private List<Tweet> tweets;
+    private ExporterTweets export;
+    private String opcao;
 
     /**
      * Creates new form CorpusGUI
@@ -26,13 +38,20 @@ public class CorpusGUI extends javax.swing.JDialog {
         super(parent, modal);
         modelColeta = new TableModelColeta();
         initComponents();
-        tweetDAO = new TweetDAO();
         colDAO = new ColetaDAO();
         coletas = colDAO.listar();
         colDAO.closeConnection();
         preencherColetas(coletas);
+        buttonGroup1.add(rdbTodos);
+        buttonGroup1.add(rdbTweet);
+        buttonGroup1.add(rdbRet);
+        buttonGroup2.add(rbAM);
+        buttonGroup2.add(rbSub);
+        export = new ExporterTweets(progress, tabela,modelColeta);
+        export.setProgress2(progress1);
+        verificarOpcao();
     }
-    
+
     private void preencherColetas(List<Coleta> list) {
         if (list != null && list.size() > 0) {
             for (Coleta c : list) {
@@ -50,10 +69,43 @@ public class CorpusGUI extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabela = new javax.swing.JTable();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel3 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        btnExportar = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        chkUrl = new javax.swing.JCheckBox();
+        chkAcentos = new javax.swing.JCheckBox();
+        rdbTodos = new javax.swing.JRadioButton();
+        rdbTweet = new javax.swing.JRadioButton();
+        rdbRet = new javax.swing.JRadioButton();
+        btnSalvar = new javax.swing.JButton();
+        cpDir = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
+        progress = new javax.swing.JProgressBar();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        cpDir1 = new javax.swing.JTextField();
+        btnSalvarAgp = new javax.swing.JButton();
+        jPanel7 = new javax.swing.JPanel();
+        chkUrl1 = new javax.swing.JCheckBox();
+        chkAcentos1 = new javax.swing.JCheckBox();
+        rdbTodos1 = new javax.swing.JRadioButton();
+        rdbTweet1 = new javax.swing.JRadioButton();
+        rdbRet1 = new javax.swing.JRadioButton();
+        jPanel8 = new javax.swing.JPanel();
+        progress1 = new javax.swing.JProgressBar();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
+        btnGerar = new javax.swing.JButton();
+        jPanel10 = new javax.swing.JPanel();
+        rbAM = new javax.swing.JRadioButton();
+        rbSub = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -69,6 +121,244 @@ public class CorpusGUI extends javax.swing.JDialog {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
 
+        btnExportar.setText("Exportar CSV");
+        btnExportar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnExportar);
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+
+        chkUrl.setSelected(true);
+        chkUrl.setText("URL");
+        jPanel5.add(chkUrl);
+
+        chkAcentos.setText("Remover acentuações");
+        jPanel5.add(chkAcentos);
+
+        rdbTodos.setSelected(true);
+        rdbTodos.setText("Todos");
+        rdbTodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbTodosActionPerformed(evt);
+            }
+        });
+        jPanel5.add(rdbTodos);
+
+        rdbTweet.setText("Tweets");
+        rdbTweet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbTweetActionPerformed(evt);
+            }
+        });
+        jPanel5.add(rdbTweet);
+
+        rdbRet.setText("Retweets");
+        rdbRet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbRetActionPerformed(evt);
+            }
+        });
+        jPanel5.add(rdbRet);
+
+        btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
+
+        cpDir.setEditable(false);
+
+        progress.setStringPainted(true);
+
+        jLabel1.setText("Progresso");
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(progress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(203, 203, 203)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(progress, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(cpDir)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSalvar))
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSalvar)
+                    .addComponent(cpDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 182, Short.MAX_VALUE)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Meta Dados", jPanel3);
+
+        cpDir1.setEditable(false);
+
+        btnSalvarAgp.setText("Salvar");
+        btnSalvarAgp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarAgpActionPerformed(evt);
+            }
+        });
+
+        jPanel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+
+        chkUrl1.setSelected(true);
+        chkUrl1.setText("URL");
+        jPanel7.add(chkUrl1);
+
+        chkAcentos1.setText("Remover acentuações");
+        jPanel7.add(chkAcentos1);
+
+        rdbTodos1.setSelected(true);
+        rdbTodos1.setText("Todos");
+        rdbTodos1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbTodos1ActionPerformed(evt);
+            }
+        });
+        jPanel7.add(rdbTodos1);
+
+        rdbTweet1.setText("Tweets");
+        rdbTweet1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbTweet1ActionPerformed(evt);
+            }
+        });
+        jPanel7.add(rdbTweet1);
+
+        rdbRet1.setText("Retweets");
+        rdbRet1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbRet1ActionPerformed(evt);
+            }
+        });
+        jPanel7.add(rdbRet1);
+
+        progress1.setStringPainted(true);
+
+        jLabel2.setText("Progresso");
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(progress1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addGap(203, 203, 203)
+                .addComponent(jLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(progress1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jPanel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+
+        btnGerar.setText("Gerar Arquivos");
+        btnGerar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerarActionPerformed(evt);
+            }
+        });
+        jPanel9.add(btnGerar);
+
+        jPanel10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+
+        rbAM.setSelected(true);
+        rbAM.setText("Arquivo Mestre");
+        jPanel10.add(rbAM);
+
+        rbSub.setText("Sub Arquivos");
+        jPanel10.add(rbSub);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(cpDir1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSalvarAgp))
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSalvarAgp)
+                    .addComponent(cpDir1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 144, Short.MAX_VALUE)
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Agrupamento", jPanel4);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -79,7 +369,7 @@ public class CorpusGUI extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE))
+                        .addComponent(jTabbedPane1))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -90,10 +380,8 @@ public class CorpusGUI extends javax.swing.JDialog {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane1))
                 .addContainerGap())
         );
 
@@ -101,10 +389,60 @@ public class CorpusGUI extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        if (tweetDAO != null) {
-            tweetDAO.closeConnection();
-        }
+        export.close();
     }//GEN-LAST:event_formWindowClosing
+
+    private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
+        export.exportar(chkUrl.isSelected(),chkAcentos.isSelected(), opcao);
+    }//GEN-LAST:event_btnExportarActionPerformed
+
+    private void rdbTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTodosActionPerformed
+        opcao = SQL.TWEETS;
+    }//GEN-LAST:event_rdbTodosActionPerformed
+
+    private void rdbTweetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTweetActionPerformed
+        opcao = SQL.ORIGINAIS;
+    }//GEN-LAST:event_rdbTweetActionPerformed
+
+    private void rdbRetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbRetActionPerformed
+        opcao = SQL.RETWEET;
+    }//GEN-LAST:event_rdbRetActionPerformed
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        export.setDiretorio(cpDir);
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnSalvarAgpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarAgpActionPerformed
+       export.setDiretorio(cpDir1);
+    }//GEN-LAST:event_btnSalvarAgpActionPerformed
+
+    private void rdbTodos1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTodos1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rdbTodos1ActionPerformed
+
+    private void rdbTweet1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTweet1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rdbTweet1ActionPerformed
+
+    private void rdbRet1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbRet1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rdbRet1ActionPerformed
+
+    private void btnGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarActionPerformed
+        export.gerar(rbAM.isSelected(), chkUrl1.isSelected(), chkAcentos1.isSelected(),opcao);
+    }//GEN-LAST:event_btnGerarActionPerformed
+
+    private void verificarOpcao() {
+        if (rdbTodos.isSelected()) {
+            opcao = SQL.TWEETS;
+        } else if (rdbTweet.isSelected()) {
+            opcao = SQL.ORIGINAIS;
+        } else if (rdbRet.isSelected()) {
+            opcao = SQL.RETWEET;
+        }
+    }
+
+   
 
     /**
      * @param args the command line arguments
@@ -149,9 +487,42 @@ public class CorpusGUI extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnExportar;
+    private javax.swing.JButton btnGerar;
+    private javax.swing.JButton btnSalvar;
+    private javax.swing.JButton btnSalvarAgp;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JCheckBox chkAcentos;
+    private javax.swing.JCheckBox chkAcentos1;
+    private javax.swing.JCheckBox chkUrl;
+    private javax.swing.JCheckBox chkUrl1;
+    private javax.swing.JTextField cpDir;
+    private javax.swing.JTextField cpDir1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JProgressBar progress;
+    private javax.swing.JProgressBar progress1;
+    private javax.swing.JRadioButton rbAM;
+    private javax.swing.JRadioButton rbSub;
+    private javax.swing.JRadioButton rdbRet;
+    private javax.swing.JRadioButton rdbRet1;
+    private javax.swing.JRadioButton rdbTodos;
+    private javax.swing.JRadioButton rdbTodos1;
+    private javax.swing.JRadioButton rdbTweet;
+    private javax.swing.JRadioButton rdbTweet1;
     private javax.swing.JTable tabela;
     // End of variables declaration//GEN-END:variables
 }

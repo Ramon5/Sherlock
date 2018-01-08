@@ -46,4 +46,5 @@ public class SQL {
     
     //extrair mês
     //select extract(month from t.created_at) as mes from TWEET as t inner join COLETA as c on (t.coleta_idcoleta = c.idcoleta) where c.idcoleta = 1;
+    //select extract(month from t.created_at) as mes, t.tweet, t.created_at from TWEET as t inner join COLETA as c on (t.coleta_idcoleta = c.idcoleta);
 }
