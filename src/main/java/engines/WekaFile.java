@@ -1,8 +1,10 @@
 package engines;
 
 import entidade.Coleta;
+import entidade.Tweet;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,29 +58,21 @@ public class WekaFile {
      *
      * @param tweet
      */
-    public void createInstances(Status tweet) {
+    public void createInstances(Tweet tweet) {
         double[] valorDeInstancia = new double[atributos.size()];
-        valorDeInstancia[0] = atributos.get(0).addStringValue(PreprocessoStrings.processar(tweet.getText(), true));
-        valorDeInstancia[1] = tweet.getInReplyToUserId();
-        valorDeInstancia[2] = atributos.get(2).addStringValue(tweet.getUser().getScreenName());
-        valorDeInstancia[3] = tweet.getId();
-        valorDeInstancia[4] = tweet.getUser().getId();
+        valorDeInstancia[0] = atributos.get(0).addStringValue(PreprocessoStrings.processar(tweet.getTweet(), true));
+        valorDeInstancia[1] = tweet.getTo_user_id();
+        valorDeInstancia[2] = atributos.get(2).addStringValue(tweet.getAutor());
+        valorDeInstancia[3] = tweet.getIdTweet();
+        valorDeInstancia[4] = tweet.getIdUsuario();
         valorDeInstancia[5] = atributos.get(5).addStringValue(tweet.getLang());
-        valorDeInstancia[6] = tweet.getFavoriteCount();
+        valorDeInstancia[6] = tweet.getFavorite_count();
         //valorDeInstancia[8] = atributos.get(8).parseDate(String.valueOf(dataHora.format(tweet.getCreatedAt())));
-        valorDeInstancia[7] = atributos.get(7).addStringValue(String.valueOf(dataHora.format(tweet.getCreatedAt())));
-        if (tweet.isRetweet()) {
-            valorDeInstancia[8] = 1;
-        } else {
-            valorDeInstancia[8] = 0;
-        }
-        if (tweet.getGeoLocation() != null) {
-            valorDeInstancia[9] = tweet.getGeoLocation().getLatitude();
-            valorDeInstancia[10] = tweet.getGeoLocation().getLongitude();
-        } else {
-            valorDeInstancia[9] = 0.0;
-            valorDeInstancia[10] = 0.0;
-        }
+        valorDeInstancia[7] = atributos.get(7).addStringValue(String.valueOf(dataHora.format(tweet.getDatecreated())));
+        valorDeInstancia[8] = tweet.getRetweet();
+        valorDeInstancia[9] = tweet.getLatitude();
+        valorDeInstancia[10] = tweet.getLongitude();
+       
         Instance instancia = new DenseInstance(1.0, valorDeInstancia);
         aux.add(instancia);
     }
@@ -88,19 +82,20 @@ public class WekaFile {
         instancias = new Instances(coleta.getTermo(), atributos, aux.size());
 
         //preenchendo o stream com as instancias de tweets recuperados
-        for (Instance i : aux) {
+        aux.forEach((i) -> {
             instancias.add(i);
-        }
+        });
     }
 
     /**
      * Grava o arquivo .arff no disco rígido
+     * @param coleta
      */
-    public void saveArff(Coleta coleta) {
+    public void saveArff(Coleta coleta, File diretorio) {
         try {
             ArffSaver saver = new ArffSaver();
             saver.setInstances(instancias);
-            saver.setFile(new File("destino/" + coleta.getTermo() + ".arff"));
+            saver.setFile(new File(diretorio.getAbsolutePath() + FileSystems.getDefault().getSeparator() + coleta.getTermo() + ".arff"));
             saver.writeBatch();
         } catch (IOException ex) {
 

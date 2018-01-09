@@ -42,14 +42,25 @@ public class CorpusGUI extends javax.swing.JDialog {
         coletas = colDAO.listar();
         colDAO.closeConnection();
         preencherColetas(coletas);
-        buttonGroup1.add(rdbTodos);
-        buttonGroup1.add(rdbTweet);
-        buttonGroup1.add(rdbRet);
-        buttonGroup2.add(rbAM);
-        buttonGroup2.add(rbSub);
+        groupButtons();
         export = new ExporterTweets(progress, tabela,modelColeta);
         export.setProgress2(progress1);
+        export.setProgressWeka(progressWeka);
         verificarOpcao();
+    }
+    
+    private void groupButtons(){
+        grupoCSV.add(rdbTodos);
+        grupoCSV.add(rdbTweet);
+        grupoCSV.add(rdbRet);
+        grupoTxtArquivo.add(rbAM);
+        grupoTxtArquivo.add(rbSub);
+        grupoTxtOpcao.add(rdbTodos1);
+        grupoTxtOpcao.add(rdbTweet1);
+        grupoTxtOpcao.add(rdbRet1);
+        grupoWeka.add(rdbTodos2);
+        grupoWeka.add(rdbTweet2);
+        grupoWeka.add(rdbRet2);
     }
 
     private void preencherColetas(List<Coleta> list) {
@@ -69,8 +80,10 @@ public class CorpusGUI extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        buttonGroup2 = new javax.swing.ButtonGroup();
+        grupoCSV = new javax.swing.ButtonGroup();
+        grupoTxtArquivo = new javax.swing.ButtonGroup();
+        grupoTxtOpcao = new javax.swing.ButtonGroup();
+        grupoWeka = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabela = new javax.swing.JTable();
@@ -106,6 +119,18 @@ public class CorpusGUI extends javax.swing.JDialog {
         jPanel10 = new javax.swing.JPanel();
         rbAM = new javax.swing.JRadioButton();
         rbSub = new javax.swing.JRadioButton();
+        jPanel11 = new javax.swing.JPanel();
+        cpDir2 = new javax.swing.JTextField();
+        btnSalvarWeka = new javax.swing.JButton();
+        jPanel12 = new javax.swing.JPanel();
+        rdbTodos2 = new javax.swing.JRadioButton();
+        rdbTweet2 = new javax.swing.JRadioButton();
+        rdbRet2 = new javax.swing.JRadioButton();
+        jPanel13 = new javax.swing.JPanel();
+        progressWeka = new javax.swing.JProgressBar();
+        jLabel3 = new javax.swing.JLabel();
+        jPanel14 = new javax.swing.JPanel();
+        btnGerarWeka = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -135,7 +160,8 @@ public class CorpusGUI extends javax.swing.JDialog {
         chkUrl.setText("URL");
         jPanel5.add(chkUrl);
 
-        chkAcentos.setText("Remover acentuações");
+        chkAcentos.setSelected(true);
+        chkAcentos.setText("Acentuações");
         jPanel5.add(chkAcentos);
 
         rdbTodos.setSelected(true);
@@ -231,7 +257,7 @@ public class CorpusGUI extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Meta Dados", jPanel3);
+        jTabbedPane1.addTab("CSV Meta Dados", jPanel3);
 
         cpDir1.setEditable(false);
 
@@ -248,7 +274,8 @@ public class CorpusGUI extends javax.swing.JDialog {
         chkUrl1.setText("URL");
         jPanel7.add(chkUrl1);
 
-        chkAcentos1.setText("Remover acentuações");
+        chkAcentos1.setSelected(true);
+        chkAcentos1.setText("Acentuações");
         jPanel7.add(chkAcentos1);
 
         rdbTodos1.setSelected(true);
@@ -357,7 +384,118 @@ public class CorpusGUI extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Agrupamento", jPanel4);
+        jTabbedPane1.addTab("TXT para agrupamento", jPanel4);
+
+        cpDir2.setEditable(false);
+
+        btnSalvarWeka.setText("Salvar");
+        btnSalvarWeka.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarWekaActionPerformed(evt);
+            }
+        });
+
+        jPanel12.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+
+        rdbTodos2.setSelected(true);
+        rdbTodos2.setText("Todos");
+        rdbTodos2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbTodos2ActionPerformed(evt);
+            }
+        });
+        jPanel12.add(rdbTodos2);
+
+        rdbTweet2.setText("Tweets");
+        rdbTweet2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbTweet2ActionPerformed(evt);
+            }
+        });
+        jPanel12.add(rdbTweet2);
+
+        rdbRet2.setText("Retweets");
+        rdbRet2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdbRet2ActionPerformed(evt);
+            }
+        });
+        jPanel12.add(rdbRet2);
+
+        progressWeka.setStringPainted(true);
+
+        jLabel3.setText("Progresso");
+
+        javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
+        jPanel13.setLayout(jPanel13Layout);
+        jPanel13Layout.setHorizontalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(progressWeka, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addGap(203, 203, 203)
+                .addComponent(jLabel3)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel13Layout.setVerticalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(progressWeka, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jPanel14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+
+        btnGerarWeka.setText("Gerar Arquivos");
+        btnGerarWeka.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerarWekaActionPerformed(evt);
+            }
+        });
+        jPanel14.add(btnGerarWeka);
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 477, Short.MAX_VALUE)
+            .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel11Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel12, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel11Layout.createSequentialGroup()
+                            .addComponent(cpDir2, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(btnSalvarWeka))
+                        .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addContainerGap()))
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 376, Short.MAX_VALUE)
+            .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel11Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnSalvarWeka)
+                        .addComponent(cpDir2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(182, 182, 182)
+                    .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+
+        jTabbedPane1.addTab("Arquivos Weka", jPanel11);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -417,20 +555,40 @@ public class CorpusGUI extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSalvarAgpActionPerformed
 
     private void rdbTodos1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTodos1ActionPerformed
-        // TODO add your handling code here:
+        opcao = SQL.TWEETS;
     }//GEN-LAST:event_rdbTodos1ActionPerformed
 
     private void rdbTweet1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTweet1ActionPerformed
-        // TODO add your handling code here:
+        opcao = SQL.ORIGINAIS;
     }//GEN-LAST:event_rdbTweet1ActionPerformed
 
     private void rdbRet1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbRet1ActionPerformed
-        // TODO add your handling code here:
+        opcao = SQL.RETWEET;
     }//GEN-LAST:event_rdbRet1ActionPerformed
 
     private void btnGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarActionPerformed
         export.gerar(rbAM.isSelected(), chkUrl1.isSelected(), chkAcentos1.isSelected(),opcao);
     }//GEN-LAST:event_btnGerarActionPerformed
+
+    private void btnSalvarWekaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarWekaActionPerformed
+        export.setDiretorio(cpDir2);
+    }//GEN-LAST:event_btnSalvarWekaActionPerformed
+
+    private void rdbTodos2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTodos2ActionPerformed
+        opcao = SQL.TWEETS;
+    }//GEN-LAST:event_rdbTodos2ActionPerformed
+
+    private void rdbTweet2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTweet2ActionPerformed
+       opcao = SQL.ORIGINAIS;
+    }//GEN-LAST:event_rdbTweet2ActionPerformed
+
+    private void rdbRet2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbRet2ActionPerformed
+       opcao = SQL.RETWEET;
+    }//GEN-LAST:event_rdbRet2ActionPerformed
+
+    private void btnGerarWekaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarWekaActionPerformed
+        export.gerarWeka(opcao);
+    }//GEN-LAST:event_btnGerarWekaActionPerformed
 
     private void verificarOpcao() {
         if (rdbTodos.isSelected()) {
@@ -489,20 +647,30 @@ public class CorpusGUI extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExportar;
     private javax.swing.JButton btnGerar;
+    private javax.swing.JButton btnGerarWeka;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSalvarAgp;
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JButton btnSalvarWeka;
     private javax.swing.JCheckBox chkAcentos;
     private javax.swing.JCheckBox chkAcentos1;
     private javax.swing.JCheckBox chkUrl;
     private javax.swing.JCheckBox chkUrl1;
     private javax.swing.JTextField cpDir;
     private javax.swing.JTextField cpDir1;
+    private javax.swing.JTextField cpDir2;
+    private javax.swing.ButtonGroup grupoCSV;
+    private javax.swing.ButtonGroup grupoTxtArquivo;
+    private javax.swing.ButtonGroup grupoTxtOpcao;
+    private javax.swing.ButtonGroup grupoWeka;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -515,14 +683,18 @@ public class CorpusGUI extends javax.swing.JDialog {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JProgressBar progress;
     private javax.swing.JProgressBar progress1;
+    private javax.swing.JProgressBar progressWeka;
     private javax.swing.JRadioButton rbAM;
     private javax.swing.JRadioButton rbSub;
     private javax.swing.JRadioButton rdbRet;
     private javax.swing.JRadioButton rdbRet1;
+    private javax.swing.JRadioButton rdbRet2;
     private javax.swing.JRadioButton rdbTodos;
     private javax.swing.JRadioButton rdbTodos1;
+    private javax.swing.JRadioButton rdbTodos2;
     private javax.swing.JRadioButton rdbTweet;
     private javax.swing.JRadioButton rdbTweet1;
+    private javax.swing.JRadioButton rdbTweet2;
     private javax.swing.JTable tabela;
     // End of variables declaration//GEN-END:variables
 }

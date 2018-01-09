@@ -147,8 +147,7 @@ public class WatsonConverter extends Thread {
         if (entrada.canRead()) {
             File[] arquivos = entrada.listFiles();
             progress.setMaximum(arquivos.length);
-            for (File file : arquivos) {
-                progress.setValue(indice);
+            for (File file : arquivos) {                
                 if (file.isDirectory()) {
                     mesclarColeta(file);
                 } else {
@@ -179,6 +178,7 @@ public class WatsonConverter extends Thread {
                         }
                     }
                 }
+                progress.setValue(indice);
             }
         }
     }

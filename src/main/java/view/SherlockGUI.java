@@ -145,14 +145,14 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         jMenu4 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         menuSair = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
-        jMenuItem5 = new javax.swing.JMenuItem();
-        menuSobre = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem5 = new javax.swing.JMenuItem();
+        menuSobre = new javax.swing.JMenuItem();
 
         jMenuItem4.setText("jMenuItem4");
 
@@ -466,26 +466,6 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
 
         jMenuBar1.add(menuOpcoes);
 
-        jMenu3.setText("Ajuda");
-
-        jMenuItem5.setText("Tutorial");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
-            }
-        });
-        jMenu3.add(jMenuItem5);
-
-        menuSobre.setText("Sobre");
-        menuSobre.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuSobreActionPerformed(evt);
-            }
-        });
-        jMenu3.add(menuSobre);
-
-        jMenuBar1.add(jMenu3);
-
         jMenu1.setText("Ferramentas");
 
         jMenuItem3.setText("Watson Toolkit");
@@ -521,6 +501,26 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         jMenu1.add(jMenuItem7);
 
         jMenuBar1.add(jMenu1);
+
+        jMenu3.setText("Ajuda");
+
+        jMenuItem5.setText("Tutorial");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem5);
+
+        menuSobre.setText("Sobre");
+        menuSobre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSobreActionPerformed(evt);
+            }
+        });
+        jMenu3.add(menuSobre);
+
+        jMenuBar1.add(jMenu3);
 
         setJMenuBar(jMenuBar1);
 
