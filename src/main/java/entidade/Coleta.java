@@ -39,6 +39,9 @@ public class Coleta {
         this.data = data;
     }
     
-    
+    @Override
+    public String toString(){
+        return termo + " - " + data;
+    }
     
 }

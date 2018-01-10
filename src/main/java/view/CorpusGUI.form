@@ -42,7 +42,10 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="jScrollPane1" min="-2" pref="302" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jScrollPane1" min="-2" pref="302" max="-2" attributes="0"/>
+                          <Component id="jLabel5" min="-2" pref="304" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jTabbedPane1" max="32767" attributes="0"/>
                   </Group>
@@ -59,8 +62,13 @@
               <Component id="jPanel1" min="-2" pref="77" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
                   <Component id="jTabbedPane1" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPane1" min="-2" pref="379" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -647,7 +655,7 @@
               <SubComponents>
                 <Component class="javax.swing.JButton" name="btnGerarWeka">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Gerar Arquivos"/>
+                    <Property name="text" type="java.lang.String" value="Gerar Arquivo Weka"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGerarWekaActionPerformed"/>
@@ -856,7 +864,7 @@
               <SubComponents>
                 <Component class="javax.swing.JButton" name="btnGerar1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Gerar Arquivos"/>
+                    <Property name="text" type="java.lang.String" value="Mesclar"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGerar1ActionPerformed"/>
@@ -868,5 +876,11 @@
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JLabel" name="jLabel5">
+      <Properties>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="text" type="java.lang.String" value="Corpus"/>
+      </Properties>
+    </Component>
   </SubComponents>
 </Form>

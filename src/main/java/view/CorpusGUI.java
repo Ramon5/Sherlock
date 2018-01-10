@@ -13,6 +13,7 @@ import java.nio.file.FileSystems;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import tablemodel.TableModelColeta;
@@ -29,6 +30,7 @@ public class CorpusGUI extends javax.swing.JDialog {
     private ColetaDAO colDAO;
     private List<Coleta> coletas;
     private ExporterTweets export;
+    private DefaultListModel modelCorpus;
     private String opcao;
 
     /**
@@ -37,20 +39,21 @@ public class CorpusGUI extends javax.swing.JDialog {
     public CorpusGUI(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         modelColeta = new TableModelColeta();
+        modelCorpus = new DefaultListModel();
         initComponents();
         colDAO = new ColetaDAO();
         coletas = colDAO.listar();
         colDAO.closeConnection();
         preencherColetas(coletas);
         groupButtons();
-        export = new ExporterTweets(progress, tabela,modelColeta);
+        export = new ExporterTweets(progress, tabela, modelColeta);
         export.setProgress2(progress1);
         export.setProgressWeka(progressWeka);
         export.setProgress3(progress2);
         verificarOpcao();
     }
-    
-    private void groupButtons(){
+
+    private void groupButtons() {
         grupoCSV.add(rdbTodos);
         grupoCSV.add(rdbTweet);
         grupoCSV.add(rdbRet);
@@ -74,8 +77,8 @@ public class CorpusGUI extends javax.swing.JDialog {
             }
         }
     }
-    
-    private int[] getItems(){
+
+    private int[] getItems() {
         return tabela.getSelectedRows();
     }
 
@@ -157,6 +160,7 @@ public class CorpusGUI extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         jPanel19 = new javax.swing.JPanel();
         btnGerar1 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -477,7 +481,7 @@ public class CorpusGUI extends javax.swing.JDialog {
 
         jPanel14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
 
-        btnGerarWeka.setText("Gerar Arquivos");
+        btnGerarWeka.setText("Gerar Arquivo Weka");
         btnGerarWeka.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGerarWekaActionPerformed(evt);
@@ -605,7 +609,7 @@ public class CorpusGUI extends javax.swing.JDialog {
 
         jPanel19.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
 
-        btnGerar1.setText("Gerar Arquivos");
+        btnGerar1.setText("Mesclar");
         btnGerar1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGerar1ActionPerformed(evt);
@@ -650,6 +654,9 @@ public class CorpusGUI extends javax.swing.JDialog {
 
         jTabbedPane1.addTab("Unir Coletas", jPanel15);
 
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Corpus");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -658,7 +665,9 @@ public class CorpusGUI extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTabbedPane1))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -671,8 +680,12 @@ public class CorpusGUI extends javax.swing.JDialog {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1))
+                    .addComponent(jTabbedPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -684,7 +697,7 @@ public class CorpusGUI extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowClosing
 
     private void btnExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarActionPerformed
-        export.exportar(chkUrl.isSelected(),chkAcentos.isSelected(), opcao);
+        export.exportar(chkUrl.isSelected(), chkAcentos.isSelected(), opcao);
     }//GEN-LAST:event_btnExportarActionPerformed
 
     private void rdbTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTodosActionPerformed
@@ -704,7 +717,7 @@ public class CorpusGUI extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnSalvarAgpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarAgpActionPerformed
-       export.setDiretorio(cpDir1);
+        export.setDiretorio(cpDir1);
     }//GEN-LAST:event_btnSalvarAgpActionPerformed
 
     private void rdbTodos1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTodos1ActionPerformed
@@ -720,7 +733,7 @@ public class CorpusGUI extends javax.swing.JDialog {
     }//GEN-LAST:event_rdbRet1ActionPerformed
 
     private void btnGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarActionPerformed
-        export.gerar(rbAM.isSelected(), chkUrl1.isSelected(), chkAcentos1.isSelected(),opcao);
+        export.gerar(rbAM.isSelected(), chkUrl1.isSelected(), chkAcentos1.isSelected(), opcao);
     }//GEN-LAST:event_btnGerarActionPerformed
 
     private void btnSalvarWekaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarWekaActionPerformed
@@ -732,11 +745,11 @@ public class CorpusGUI extends javax.swing.JDialog {
     }//GEN-LAST:event_rdbTodos2ActionPerformed
 
     private void rdbTweet2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbTweet2ActionPerformed
-       opcao = SQL.ORIGINAIS;
+        opcao = SQL.ORIGINAIS;
     }//GEN-LAST:event_rdbTweet2ActionPerformed
 
     private void rdbRet2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbRet2ActionPerformed
-       opcao = SQL.RETWEET;
+        opcao = SQL.RETWEET;
     }//GEN-LAST:event_rdbRet2ActionPerformed
 
     private void btnGerarWekaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarWekaActionPerformed
@@ -772,8 +785,6 @@ public class CorpusGUI extends javax.swing.JDialog {
             opcao = SQL.RETWEET;
         }
     }
-
-   
 
     /**
      * @param args the command line arguments
@@ -845,6 +856,7 @@ public class CorpusGUI extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
