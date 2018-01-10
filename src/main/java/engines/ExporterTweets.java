@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,12 +37,15 @@ public class ExporterTweets {
     private List<Tweet> tweets;
     private JProgressBar progress2;
     private JProgressBar progressWeka;
+    private JProgressBar progress3;
+    private SimpleDateFormat date;
 
     public ExporterTweets(JProgressBar progress, JTable tabela, TableModelColeta modelColeta) {
         tweetDAO = new TweetDAO();
         this.progress = progress;
         this.tabela = tabela;
         this.modelColeta = modelColeta;
+        this.date = new SimpleDateFormat("dd-MM-yyyy hh;mm;ss");
     }
 
     public void setProgress2(JProgressBar progress2) {
@@ -50,6 +55,12 @@ public class ExporterTweets {
     public void setProgressWeka(JProgressBar progressWeka) {
         this.progressWeka = progressWeka;
     }
+
+    public void setProgress3(JProgressBar progress3) {
+        this.progress3 = progress3;
+    }
+    
+    
 
     public void setDiretorio(JTextField campo) {
         JFileChooser chooser = new JFileChooser();
@@ -78,7 +89,7 @@ public class ExporterTweets {
                             Coleta coleta = (Coleta) modelColeta.getSelecionado(codigo);
                             tweets = tweetDAO.getTweets(coleta, opcao);
                             String nomeArquivo = diretorio.getAbsolutePath()
-                                    + FileSystems.getDefault().getSeparator() + coleta.getTermo() + "-" + coleta.getData() + ".csv";
+                                    + FileSystems.getDefault().getSeparator() + coleta.getTermo() + "-" + date.format(coleta.getData()) + ".csv";
                             File arquivo = new File(nomeArquivo);
                             fwriter = new FileWriter(arquivo);
                             writer = new BufferedWriter(fwriter);
@@ -152,7 +163,7 @@ public class ExporterTweets {
                                 dir.mkdir();
                             }
                             tweets = tweetDAO.getTweets(coleta, opcao);
-                            String arquivo = dir.getAbsolutePath() + FileSystems.getDefault().getSeparator() + coleta.getTermo() + "-" + coleta.getData() + ".txt";
+                            String arquivo = dir.getAbsolutePath() + FileSystems.getDefault().getSeparator() + coleta.getTermo() + "-" + date.format(coleta.getData()) + ".txt";
                             File file = new File(arquivo);
                             fwriter = new FileWriter(file);
                             writer = new BufferedWriter(fwriter);
@@ -171,7 +182,8 @@ public class ExporterTweets {
                             }
                             writer.close();
                             fwriter.close();
-                            JOptionPane.showMessageDialog(null, "Arquivo gerado com sucesso!");
+                            JOptionPane.showMessageDialog(null, "Arquivo gerado com sucesso! " + tweets.size() + " tweets");
+                            tweets.clear();
 
                         } catch (IOException ex) {
                             Logger.getLogger(ExporterTweets.class.getName()).log(Level.SEVERE, null, ex);
@@ -216,7 +228,7 @@ public class ExporterTweets {
                             FileWriter fwriter = null;
                             BufferedWriter writer = null;
                             try {
-                                String file = dir.getAbsolutePath() + FileSystems.getDefault().getSeparator() + (i + 1) + "-" + coleta.getTermo() + "-" + t.getDatecreated() + ".txt";
+                                String file = dir.getAbsolutePath() + FileSystems.getDefault().getSeparator() + (i + 1) + "-" + coleta.getTermo() + "-" + date.format(coleta.getData()) + ".txt";
                                 fwriter = new FileWriter(new File(file));
                                 writer = new BufferedWriter(fwriter);
                                 String texto = t.getTweet();
@@ -244,7 +256,8 @@ public class ExporterTweets {
                                 }
                             }
                         }
-                        JOptionPane.showMessageDialog(null, "Arquivos gerados com sucesso!");
+                        JOptionPane.showMessageDialog(null, "Arquivos gerados com sucesso! " + tweets.size() + " arquivos");
+                        tweets.clear();
                     }
                 }
             }.start();
@@ -272,7 +285,67 @@ public class ExporterTweets {
                         }
                         weka.buildInstances(coleta);
                         weka.saveArff(coleta, diretorio);
-                        JOptionPane.showMessageDialog(null, "Arquivo gerado com sucesso!");
+                        JOptionPane.showMessageDialog(null, "Arquivo gerado com sucesso! " + tweets.size() + " tweets");
+                        tweets.clear();
+                    }
+                }
+
+            }.start();
+
+        }
+    }
+
+    public void unirColetas(int items[], boolean url, boolean acentos, String opcao) {
+        if (items.length > 0) {
+            new Thread() {
+                public void run() {
+                    List<Coleta> coletas = new ArrayList<>();
+                    List<Tweet> tweet = new ArrayList<>();
+                    for (int i : items) {
+                        Coleta c = (Coleta) modelColeta.getSelecionado(i);
+                        coletas.add(c);
+                    }
+                    for (Coleta c : coletas) {
+                        tweets = tweetDAO.getTweets(c, opcao);
+                        tweet.addAll(tweets);
+                        tweets.clear();
+                    }
+                    progress3.setMaximum(tweet.size());
+                    File corpus = new File(diretorio.getAbsolutePath() + FileSystems.getDefault().getSeparator() + "Corpus.txt");
+                    FileWriter fwriter = null;
+                    BufferedWriter writer = null;
+                    try {
+                        fwriter = new FileWriter(corpus);
+                        writer = new BufferedWriter(fwriter);
+                        int i = 0;
+                        for (Tweet t : tweet) {
+                            String texto = t.getTweet();
+                            if (!acentos) {
+                                texto = PreprocessoStrings.processar(texto, !url);
+                            }
+                            writer.append(texto);
+                            writer.newLine();
+                            i++;
+                            progress3.setValue(i);
+                        }
+                        writer.close();
+                        fwriter.close();                        
+                        JOptionPane.showMessageDialog(null, "Arquivo gerado com sucesso! " + tweet.size() + " tweets");
+                        tweet.clear();
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(ExporterTweets.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally {
+                        try {
+                            if (fwriter != null) {
+                                fwriter.close();
+                            }
+                            if (writer != null) {
+                                writer.close();
+                            }
+                        } catch (IOException ex) {
+                            Logger.getLogger(ExporterTweets.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
 

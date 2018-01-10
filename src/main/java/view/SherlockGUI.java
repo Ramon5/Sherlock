@@ -476,7 +476,7 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         });
         jMenu1.add(jMenuItem3);
 
-        jMenuItem6.setText("Weka Converter");
+        jMenuItem6.setText("Conversor Weka");
         jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem6ActionPerformed(evt);
@@ -484,7 +484,7 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         });
         jMenu1.add(jMenuItem6);
 
-        jMenuItem2.setText("Database Collects");
+        jMenuItem2.setText("Banco de Coletas");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -492,7 +492,7 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         });
         jMenu1.add(jMenuItem2);
 
-        jMenuItem7.setText("Corpus Factory");
+        jMenuItem7.setText("Fábrica de Corpus");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem7ActionPerformed(evt);
