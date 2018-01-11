@@ -95,6 +95,7 @@ public class ColetasGUI extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         lbTotal = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         tableColeta = new javax.swing.JTable();
@@ -119,6 +120,10 @@ public class ColetasGUI extends javax.swing.JDialog {
         jPanel3.add(lbTotal);
 
         jPanel4.setBackground(new java.awt.Color(51, 51, 51));
+        jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 20));
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/coletas.png"))); // NOI18N
+        jPanel4.add(jLabel2);
 
         jLabel4.setText("Coletas:");
 
@@ -336,6 +341,7 @@ public class ColetasGUI extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
