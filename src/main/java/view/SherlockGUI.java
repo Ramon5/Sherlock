@@ -80,12 +80,16 @@ public class SherlockGUI extends javax.swing.JFrame implements DetectaSistema {
         if (auth.size() > 0) {
             for (Autenticacao a : auth) {
                 List<Chave> chaves = cDAO.listar(a);
-                for (Chave c : chaves) {
-                    keys.add(c);
+                if (chaves.size() > 0) {
+                    for (Chave c : chaves) {
+                        keys.add(c);
+                    }
+                    AutenticacaoAPI.indiceChave = 0;
+                    AutenticacaoAPI.appAutentication(keys.get(0));
+                } else {
+                    JOptionPane.showMessageDialog(this, "Você não possui credenciais!");
                 }
             }
-            AutenticacaoAPI.indiceChave = 0;
-            AutenticacaoAPI.appAutentication(keys.get(0));
         } else {
             JOptionPane.showMessageDialog(this, "Você não possui credenciais!");
         }

@@ -74,7 +74,7 @@ public class AuthController {
             requestToken = twitter.getOAuthRequestToken();
             accessToken = null;
 
-            if (null == accessToken) {
+            if (accessToken == null) {
                 irParaSite(requestToken.getAuthorizationURL());
                 String pin = JOptionPane.showInputDialog(null, "Insira o código PIN", "PIN para geração do token", JOptionPane.INFORMATION_MESSAGE);
                 if (pin != null) {
